@@ -1,0 +1,49 @@
+{
+  "_frame": "mm; x forward, y right, z up. Origin: x=0 at the wing-root leading edge, y=0 symmetry plane, z=0 servo bottom face",
+  "_note": "Single source of truth. design/fusion_build.py builds the Fusion model from this file and writes design/fusion_mass_properties.json; the analysis scripts read both files.",
+
+  "wing": {
+    "root": [0.0, 24.2, 17.9],
+    "dihedral_deg": 11.0,
+    "hind_incidence_deg": -5.0,
+    "_outline_note": "one membrane per side, flat-cut: R(0,0) -straight along LE rod-> le_rod.end -fore_curve-> notch -hind_curve-> root_edge_end -straight along root rod-> R. Fold line R->notch.",
+    "outline": {
+      "fore_curve": [[15,370],[-30,385],[-90,360],[-140,300],[-163,225]],
+      "notch": [-158, 150],
+      "hind_curve": [[-185,192],[-225,230],[-265,215],[-285,160],[-275,90]],
+      "root_edge_end": [-245, 42]
+    },
+    "le_rod": {"end": [35, 320], "od": 2.0, "id": 1.0},
+    "fold_rod": {"d": 1.0},
+    "root_rod": {"d": 1.0},
+    "veins": [
+      {"name": "A", "on": "LE",   "t": 100, "end": [-140, 272], "d": 1.0},
+      {"name": "B", "on": "LE",   "t": 220, "end": [-88, 350],  "d": 0.8},
+      {"name": "C", "on": "Fold", "t": 110, "end": [-265, 195], "d": 0.8}
+    ],
+    "membrane_gsm": 20.0,
+    "membrane_wrap_mm": 6.0
+  },
+
+  "servo": {
+    "model": "PTK 7465Plus",
+    "L": 23.7, "W": 12.0, "H": 26.6, "mass_g": 13.2,
+    "orientation": "output_aft",
+    "output_face_x": 5.25,
+    "shaft_y": 6.2, "shaft_z": 17.9, "shaft_len": 4.0,
+    "horn_thickness": 2.0, "horn_width": 5.5, "horn_len": 18.0, "horn_mass_g": 0.4,
+    "ear_from_output_face": 6.6, "ear_overhang": 4.5
+  },
+
+  "body": {
+    "spine": {"x_front": 35.0, "length": 250.0, "section": 2.0, "z_centre": -2.8},
+    "tray": {"centre_x": -60.0, "length": 75.0, "width": 20.0, "esp32": [22.5, 18.0], "buck": [17.0, 11.0]},
+    "battery": {"centre_x": -66.9, "size": [32.0, 20.0, 11.0], "mass_g": 11.0},
+    "esp32_mass_g": 1.6, "buck_mass_g": 1.5,
+    "wires": {"mass_g": 3.0, "x": -5.0}
+  },
+
+  "materials_g_cm3": {"PLA": 1.24, "carbon": 1.55},
+
+  "flight": {"f_hz": 2.5, "amp_deg": 20.0, "eta": 0.6, "target_cg_behind_le_mm": 20.0}
+}

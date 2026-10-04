@@ -1,0 +1,59 @@
+[
+  {
+    "case": "static_a10",
+    "f": 0,
+    "amp": 0,
+    "U": 3.5,
+    "alpha": 10.0,
+    "eta": 0.0,
+    "F_W": [
+      -0.0387,
+      0.0,
+      -0.5973
+    ],
+    "M_W": [
+      0.0,
+      0.01965,
+      0.0
+    ]
+  },
+  {
+    "case": "flap_rigid",
+    "f": 2.5,
+    "amp": 30,
+    "U": 3.5,
+    "alpha": 10.0,
+    "eta": 0.0,
+    "F_W": [
+      0.18,
+      0.0,
+      -0.7893
+    ],
+    "M_W": [
+      0.0,
+      0.01191,
+      0.0
+    ]
+  },
+  {
+    "case": "flap_eta06",
+    "f": 2.5,
+    "amp": 30,
+    "U": 3.5,
+    "alpha": 10.0,
+    "eta": 0.6,
+    "F_W": [
+      0.1262,
+      0.0,
+      -0.7169
+    ],
+    "M_W": [
+      0.0,
+      0.01465,
+      0.0
+    ]
+  },
+  {
+    "note": "wind axes: lift = -Fz, thrust = +Fx (inviscid, no profile drag); My>0 nose-up about CG at 65 mm behind root LE"
+  }
+]

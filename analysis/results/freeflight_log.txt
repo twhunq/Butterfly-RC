@@ -1,0 +1,26 @@
+mass 59.7 g, CG model (mm) [-13.1   0.   10.6], I diag (kg m2) [0.0003153 0.0001165 0.0003926]
+Traceback (most recent call last):
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\ptera_freeflight.py", line 81, in <module>
+    main()
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\ptera_freeflight.py", line 67, in main
+    solver.run(prescribed_wake=True, calculate_streamlines=False, show_progress=False)
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\unsteady_ring_vortex_lattice_method.py", line 495, in run
+    self._update_next_step_hook(step)
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\_coupled_unsteady_ring_vortex_lattice_method.py", line 84, in _update_next_step_hook
+    self._coupled_unsteady_problem.initialize_next_problem(self, step)
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\problems.py", line 1294, in initialize_next_problem
+    self._advance_strongly_coupled(
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\problems.py", line 1186, in _advance_strongly_coupled
+    trial_operating_point = self._operating_point_from_vector(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\problems.py", line 949, in _operating_point_from_vector
+    return self._build_next_operating_point(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\problems.py", line 1003, in _build_next_operating_point
+    return operating_point_mod.OperatingPoint(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\operating_point.py", line 232, in __init__
+    _parameter_validation.number_in_range_return_float(
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\_parameter_validation.py", line 165, in number_in_range_return_float
+    raise ValueError(f"{name} must be greater than {min_val}.")
+ValueError: angles_E_to_BP1_izyx[0] must be greater than -180.0.

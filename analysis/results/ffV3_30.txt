@@ -1,0 +1,1 @@
+cg20_f2.5_a30_U3.6 completed steps 256 | last 0.4 s: pitch 25.9 deg, alpha 8.2 deg, V 4.39 m/s, climb 1.33 m/s, roll 0.0, yaw -0.0

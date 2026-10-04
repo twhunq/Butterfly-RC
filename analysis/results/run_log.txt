@@ -1,0 +1,88 @@
+{'f': 2.0, 'amp': 25, 'U': np.float64(4.0), 'theta': np.float64(7.0), 'trim_err': 0.081, 'servo_margin': np.float64(1.83), 'tau_peak': 0.147, 'omega_peak': 5.48, 'P_mech_W': np.float64(0.45)}
+{'f': 2.0, 'amp': 30, 'U': np.float64(4.2), 'theta': np.float64(7.0), 'trim_err': 0.042, 'servo_margin': np.float64(1.55), 'tau_peak': 0.17, 'omega_peak': 6.58, 'P_mech_W': np.float64(0.657)}
+{'f': 2.0, 'amp': 36, 'U': np.float64(4.4), 'theta': np.float64(7.0), 'trim_err': 0.015, 'servo_margin': np.float64(1.3), 'tau_peak': 0.197, 'omega_peak': 7.9, 'P_mech_W': np.float64(0.966)}
+{'f': 2.0, 'amp': 42, 'U': np.float64(3.7), 'theta': np.float64(12.0), 'trim_err': 0.022, 'servo_margin': np.float64(1.19), 'tau_peak': 0.188, 'omega_peak': 9.21, 'P_mech_W': np.float64(0.995)}
+{'f': 2.5, 'amp': 25, 'U': np.float64(4.4), 'theta': np.float64(6.0), 'trim_err': 0.028, 'servo_margin': np.float64(1.47), 'tau_peak': 0.19, 'omega_peak': 6.85, 'P_mech_W': np.float64(0.773)}
+{'f': 2.5, 'amp': 30, 'U': np.float64(5.6), 'theta': np.float64(4.0), 'trim_err': 0.009, 'servo_margin': np.float64(1.15), 'tau_peak': 0.254, 'omega_peak': 8.22, 'P_mech_W': np.float64(1.438)}
+{'f': 2.5, 'amp': 36, 'U': np.float64(3.4), 'theta': np.float64(14.0), 'trim_err': 0.033, 'servo_margin': np.float64(1.12), 'tau_peak': 0.203, 'omega_peak': 9.87, 'P_mech_W': np.float64(1.086)}
+{'f': 2.5, 'amp': 42, 'U': np.float64(3.2), 'theta': np.float64(19.0), 'trim_err': 0.008, 'servo_margin': np.float64(0.96), 'tau_peak': 0.226, 'omega_peak': 11.51, 'P_mech_W': np.float64(1.438)}
+{'f': 3.0, 'amp': 25, 'U': np.float64(5.5), 'theta': np.float64(4.0), 'trim_err': 0.01, 'servo_margin': np.float64(1.16), 'tau_peak': 0.262, 'omega_peak': 8.22, 'P_mech_W': np.float64(1.428)}
+{'f': 3.0, 'amp': 30, 'U': np.float64(3.4), 'theta': np.float64(14.0), 'trim_err': 0.026, 'servo_margin': np.float64(1.12), 'tau_peak': 0.226, 'omega_peak': 9.87, 'P_mech_W': np.float64(1.132)}
+{'f': 3.0, 'amp': 36, 'U': np.float64(3.1), 'theta': np.float64(19.0), 'trim_err': 0.019, 'servo_margin': np.float64(0.93), 'tau_peak': 0.249, 'omega_peak': 11.84, 'P_mech_W': np.float64(1.577)}
+{'f': 3.0, 'amp': 42, 'U': np.float64(2.6), 'theta': np.float64(30.0), 'trim_err': 0.02, 'servo_margin': np.float64(0.8), 'tau_peak': 0.28, 'omega_peak': 13.82, 'P_mech_W': np.float64(2.119)}
+{'f': 3.5, 'amp': 25, 'U': np.float64(3.4), 'theta': np.float64(13.0), 'trim_err': 0.01, 'servo_margin': np.float64(1.14), 'tau_peak': 0.243, 'omega_peak': 9.6, 'P_mech_W': np.float64(1.123)}
+{'f': 3.5, 'amp': 30, 'U': np.float64(3.1), 'theta': np.float64(18.0), 'trim_err': 0.011, 'servo_margin': np.float64(0.96), 'tau_peak': 0.267, 'omega_peak': 11.51, 'P_mech_W': np.float64(1.555)}
+{'f': 3.5, 'amp': 36, 'U': np.float64(2.5), 'theta': np.float64(30.0), 'trim_err': 0.023, 'servo_margin': np.float64(0.8), 'tau_peak': 0.301, 'omega_peak': 13.82, 'P_mech_W': np.float64(2.197)}
+{'f': 3.5, 'amp': 42, 'U': np.float64(2.6), 'theta': np.float64(30.0), 'trim_err': 0.218, 'servo_margin': np.float64(0.68), 'tau_peak': 0.352, 'omega_peak': 16.12, 'P_mech_W': np.float64(3.139)}
+{'f': 4.0, 'amp': 25, 'U': np.float64(3.1), 'theta': np.float64(17.0), 'trim_err': 0.005, 'servo_margin': np.float64(1.0), 'tau_peak': 0.282, 'omega_peak': 10.97, 'P_mech_W': np.float64(1.469)}
+{'f': 4.0, 'amp': 30, 'U': np.float64(2.6), 'theta': np.float64(27.0), 'trim_err': 0.014, 'servo_margin': np.float64(0.83), 'tau_peak': 0.318, 'omega_peak': 13.16, 'P_mech_W': np.float64(2.09)}
+{'f': 4.0, 'amp': 36, 'U': np.float64(2.5), 'theta': np.float64(30.0), 'trim_err': 0.192, 'servo_margin': np.float64(0.69), 'tau_peak': 0.372, 'omega_peak': 15.79, 'P_mech_W': np.float64(3.106)}
+{'f': 4.0, 'amp': 42, 'U': np.float64(2.6), 'theta': np.float64(30.0), 'trim_err': 0.446, 'servo_margin': np.float64(0.58), 'tau_peak': 0.434, 'omega_peak': 18.42, 'P_mech_W': np.float64(4.457)}
+{'od': 0.0015, 'idd': 0, 'mass_g': 0.88173, 'Mroot': np.float64(0.08286), 'sigma_MPa': np.float64(250.07909), 'tip_mm': np.float64(92.07987), 'tip_pct': np.float64(24.81937), 'k': 31, 'share': 0.6}
+{'od': 0.0015, 'idd': 0, 'mass_g': 0.88173, 'Mroot': np.float64(0.13614), 'sigma_MPa': np.float64(410.87383), 'tip_mm': np.float64(150.9639), 'tip_pct': np.float64(40.69108), 'k': 32, 'share': 1.0}
+{'od': 0.002, 'idd': 0, 'mass_g': 1.56752, 'Mroot': np.float64(0.08524), 'sigma_MPa': np.float64(108.5286), 'tip_mm': np.float64(30.08739), 'tip_pct': np.float64(8.10981), 'k': 30, 'share': 0.6}
+{'od': 0.002, 'idd': 0, 'mass_g': 1.56752, 'Mroot': np.float64(0.13844), 'sigma_MPa': np.float64(176.26414), 'tip_mm': np.float64(48.69099), 'tip_pct': np.float64(13.12426), 'k': 31, 'share': 1.0}
+{'od': 0.002, 'idd': 0.001, 'mass_g': 1.17564, 'Mroot': np.float64(0.08387), 'sigma_MPa': np.float64(113.90289), 'tip_mm': np.float64(31.50334), 'tip_pct': np.float64(8.49147), 'k': 31, 'share': 0.6}
+{'od': 0.002, 'idd': 0.001, 'mass_g': 1.17564, 'Mroot': np.float64(0.13712), 'sigma_MPa': np.float64(186.22234), 'tip_mm': np.float64(51.36479), 'tip_pct': np.float64(13.84496), 'k': 32, 'share': 1.0}
+{'od': 0.0025, 'idd': 0.0015, 'mass_g': 1.56752, 'Mroot': np.float64(0.08524), 'sigma_MPa': np.float64(63.84035), 'tip_mm': np.float64(14.15877), 'tip_pct': np.float64(3.81638), 'k': 30, 'share': 0.6}
+{'od': 0.0025, 'idd': 0.0015, 'mass_g': 1.56752, 'Mroot': np.float64(0.13844), 'sigma_MPa': np.float64(103.68479), 'tip_mm': np.float64(22.91341), 'tip_pct': np.float64(6.17612), 'k': 31, 'share': 1.0}
+{'od': 0.003, 'idd': 0.002, 'mass_g': 1.9594, 'Mroot': np.float64(0.08664), 'sigma_MPa': np.float64(40.73026), 'tip_mm': np.float64(7.54552), 'tip_pct': np.float64(2.03383), 'k': 29, 'share': 0.6}
+{'od': 0.003, 'idd': 0.002, 'mass_g': 1.9594, 'Mroot': np.float64(0.13978), 'sigma_MPa': np.float64(65.7132), 'tip_mm': np.float64(12.11667), 'tip_pct': np.float64(3.26595), 'k': 31, 'share': 1.0}
+{
+ "total_mass_g": 60.387,
+ "total_area_dm2": 16.233429340711986,
+ "AR": 4.13120392694248,
+ "wing_loading_g_dm2": 3.7199163979822067,
+ "design_point": {
+  "f": 2.0,
+  "amp": 30,
+  "U": 4.2,
+  "theta": 7.0,
+  "trim_err": 0.042,
+  "servo_margin": 1.55,
+  "tau_peak": 0.17,
+  "omega_peak": 6.58,
+  "P_mech_W": 0.657
+ },
+ "cg_x_mm_behind_LE_root": 42.474629387530165,
+ "sensitivity": {
+  "CLx0.7": {
+   "U": 4.6,
+   "theta": 8.0,
+   "trim_err": 0.185
+  },
+  "CLx1.3": {
+   "U": 3.1,
+   "theta": 11.0,
+   "trim_err": 0.017
+  },
+  "eta=0.3": {
+   "U": 4.8,
+   "theta": 6.0,
+   "trim_err": 0.075,
+   "servo_margin": 1.39,
+   "P_mech_W": 1.099
+  },
+  "eta=0.5": {
+   "U": 4.6,
+   "theta": 6.0,
+   "trim_err": 0.041,
+   "servo_margin": 1.47,
+   "P_mech_W": 0.849
+  },
+  "eta=0.7": {
+   "U": 4.1,
+   "theta": 7.0,
+   "trim_err": 0.054,
+   "servo_margin": 1.59,
+   "P_mech_W": 0.548
+  },
+  "eta=0.8": {
+   "U": 3.8,
+   "theta": 8.0,
+   "trim_err": 0.081,
+   "servo_margin": 1.67,
+   "P_mech_W": 0.429
+  }
+ }
+}

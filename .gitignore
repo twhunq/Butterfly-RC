@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+analysis/.venv/
+analysis/results/*.json.gz
+analysis/results/freeflight/*.json.gz

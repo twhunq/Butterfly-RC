@@ -1,0 +1,11 @@
+{'case': 'flap_rigid', 'f': 2.5, 'amp': 30, 'U': 3.5, 'alpha': 10.0, 'eta': 0.0, 'F_W': [0.18, 0.0, -0.7893], 'M_W': [-0.0, 0.01191, -0.0], 'weight_N': 0.5774}
+{'case': 'flap_eta06', 'f': 2.5, 'amp': 30, 'U': 3.5, 'alpha': 10.0, 'eta': 0.6, 'F_W': [0.1262, -0.0, -0.7169], 'M_W': [0.0, 0.01465, -0.0], 'weight_N': 0.5774}
+Traceback (most recent call last):
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\ptera_butterfly.py", line 123, in <module>
+    res = [run_case(*c, animate=(c[0] == "flap_eta06")) for c in cases]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\ptera_butterfly.py", line 112, in run_case
+    ps.save(str(OUT / f"{name}.psz"), solver)
+  File "C:\Users\Admin\orca\projects\Butterfly_RC\analysis\.venv\Lib\site-packages\pterasoftware\_serialization.py", line 220, in save
+    raise ValueError(
+ValueError: Path must end with '.json' or '.json.gz', got 'flap_eta06.psz'.
