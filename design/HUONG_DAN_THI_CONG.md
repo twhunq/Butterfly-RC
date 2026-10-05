@@ -24,25 +24,35 @@ Tất cả kích thước trong hướng dẫn này được sinh ra từ `butte
 | Que carbon đặc 0,8mm | Gân B 2 × 170,5mm; gân C 2 × 218,8mm |
 | Ống carbon vuông 2mm | 1 × 250mm (xương sống) |
 | Màng: mylar 12µm (chăn cứu sinh) hoặc vải dù diều P31N | Khoảng 2 tấm 40 × 45cm |
-| Vít M2 × 6 | 2 (bắt khớp nối vào tay servo) |
+| Bulông M2 × 10 + đai ốc M2 | 4 (mỗi hub gốc cánh kẹp tay servo bằng 2 bulông xuyên qua) |
 | Keo 502 (CA), keo xịt 3M Super 77 (mylar) hoặc B7000 (vải), dây rút nhỏ, dây silicone 30AWG, jack JST 1,25 | — |
 
 ## 3. In 3D
 
 | Chi tiết | Số lượng | Vật liệu / thông số |
 |---|---|---|
-| `PRINT_HornAdapter_R`, `_L` (khớp nối tay servo) | 1 mỗi bên | PETG hoặc PA12, **100% infill**, lớp 0,12mm. Đây là chi tiết chịu lực chính |
-| `PRINT_ConnA/B/C_R`, `_L` (khớp gân) | 6 | PETG, 100% infill, lớp 0,12mm |
-| `Frame_ServoMount` | 1 | PLA+ hoặc PETG, 4 vách |
+| `PRINT_WingHub_R`, `_L` (hub gốc cánh, một khối liền) | 1 mỗi bên | **PETG** (hoặc PA12), **100% infill**, lớp 0,12mm. Đây là chi tiết chịu lực chính |
+| `PRINT_ConnA/B/C_R`, `_L` (khớp gân, thành 1,2mm) | 6 | PETG, 100% infill, lớp 0,12mm |
+| `Frame_ServoMount` (thành 1,6mm) | 1 | PETG hoặc PLA+, 100% infill |
 | `Tray_Abdomen` | 1 | PLA+, 3 vách |
 
-- Lỗ in thường bị nhỏ đi 0,1–0,2mm. Doa lại bằng mũi khoan tay 2,0 / 1,0 / 0,8mm đến khi que trượt vào vừa khít.
-- Khớp nối tay servo có 3 lỗ que: cạnh trước (ống 2,0mm), đường gấp (1,0mm), que gốc (1,0mm). **Hướng các lỗ đã được thiết kế sẵn để tạo góc nhị diện 11° và góc gấp 7,3°** cho tấm sau. Đừng khoan lệch hướng.
+Hub gốc cánh là một khối liền gồm 4 phần:
+- **khối kẹp** ôm đầu tay servo, thành 2mm mỗi bên, bắt 2 bulông M2 xuyên qua;
+- **khối sau** chôn gốc các ống cắm;
+- **3 ống cắm dày**: que cạnh trước Ø7,2mm cắm sâu 18mm; que đường gấp và que gốc Ø4,6mm cắm sâu 14mm;
+- **gân liền** nối giữa các ống.
+
+Kiểm tra bền (`analysis/printed_parts_check.py`, với tải xấu nhất): ứng suất gốc ống cắm 3,8–5,0 MPa, hệ số an toàn mỏi 1,6–2,1. Bản cũ là 22–27 MPa, sẽ nứt.
+
+- **Hướng đặt khi in:** đặt hub sao cho **các ống cắm nằm ngang trên bàn in**, mặt phẳng cánh song song mặt bàn. Lực uốn khi đó chạy dọc theo sợi nhựa, không xé ngang giữa các lớp. Dùng support dạng cây cho khối kẹp. Khớp gân cũng đặt nằm, với ống luồn que nằm ngang.
+- Lỗ in thường nhỏ đi 0,1–0,2mm. Doa lại bằng mũi khoan tay 2,0 / 1,0 / 0,8mm đến khi que trượt vào vừa khít, rồi cố định bằng keo 502 hoặc epoxy.
+- **Tay servo:** khoan 2 lỗ Ø2,2mm trên tay servo zin, trùng 2 lỗ của hub. Vị trí lỗ cách tâm trục 7,8mm và 12,8mm (đo trên mô hình hoặc lấy dấu bằng chính hub).
+- Hướng các lỗ trong hub đã tạo sẵn **góc nhị diện 11° và góc gấp 7,3°** cho tấm sau. Đừng khoan lệch hướng.
 
 ## 4. Cắt que
 
 - Cắt bằng đĩa cắt Dremel hoặc mài trên giấy nhám; không dùng kéo vì que carbon sẽ bị tưa sợi.
-- Chiều dài cắt trong bảng đã trừ phần que cắm vào lỗ khớp: lỗ ở khớp nối tay servo bắt đầu cách điểm R 3mm; lỗ ở khớp gân bắt đầu cách mặt que gốc 1mm.
+- Chiều dài cắt trong bảng đã trừ phần que cắm vào lỗ khớp: lỗ ở hub gốc cánh bắt đầu cách điểm R 3mm; lỗ ở khớp gân bắt đầu cách mặt que gốc 1mm.
 
 ## 5. Cắt màng
 
@@ -53,7 +63,7 @@ Tất cả kích thước trong hướng dẫn này được sinh ra từ `butte
 
 ## 6. Ráp khung cánh (làm ngay trên mẫu in)
 
-1. Cắm ống cạnh trước, que đường gấp và que gốc vào khớp nối tay servo. Chưa nhỏ keo.
+1. Cắm ống cạnh trước, que đường gấp và que gốc vào hub gốc cánh. Chưa nhỏ keo.
 2. Luồn khớp A và B vào ống cạnh trước, cách R 100mm và 220mm. Luồn khớp C vào que đường gấp, cách R 110mm.
 3. Cắm gân A, B, C vào khớp.
 4. Đặt khung lên mẫu sao cho mọi que trùng nét vẽ. Tấm sau nằm thấp hơn mặt phẳng tấm trước (xem bước 7). Kiểm tra xong mới nhỏ keo 502 vào từng mối.
@@ -79,7 +89,7 @@ Tất cả kích thước trong hướng dẫn này được sinh ra từ `butte
 
 1. Lắp 2 servo quay lưng vào nhau vào khung servo, **trục ra hướng về phía sau** (về phía đuôi).
 2. Luồn xương sống 250mm qua ống kẹp của khung (thò ra trước 35mm), rồi luồn khay bụng.
-3. Đặt ESP32‑C3 và mạch buck vào ô trên khay. Buộc pin dưới khay bằng 2 dây rút qua 2 rãnh. Tâm pin ở x = −66,9mm, tức là cách mặt phẳng khớp nối tay servo 67mm về phía sau.
+3. Đặt ESP32‑C3 và mạch buck vào ô trên khay. Buộc pin dưới khay bằng 2 dây rút qua 2 rãnh. Tâm pin ở x = −73,5mm, tức là cách mặt phẳng hub gốc cánh 73,5mm về phía sau.
 4. Cho servo về vị trí giữa (1500 µs), lắp tay servo nằm ngang hướng ra ngoài, gắn khớp nối cánh vào tay servo và bắt vít M2.
 5. Đi dây:
    - pin → mạch buck 5V → chân 5V của ESP32;
@@ -89,7 +99,7 @@ Tất cả kích thước trong hướng dẫn này được sinh ra từ `butte
 
 ## 9. Cân trọng tâm và bay thử
 
-1. Trọng tâm phải nằm **20mm sau mép trước gốc cánh**, tức là 20mm sau mặt phẳng tâm 2 khớp nối tay servo. Đỡ bướm bằng 2 ngón tay tại đó: thân phải nằm ngang. Trượt pin 10mm thì trọng tâm dịch khoảng 1,8mm.
+1. Trọng tâm phải nằm **20mm sau mép trước gốc cánh**, tức là 20mm sau mặt phẳng tâm 2 hub gốc cánh. Đỡ bướm bằng 2 ngón tay tại đó: thân phải nằm ngang. Trượt pin 10mm thì trọng tâm dịch khoảng 1,7mm.
 2. Ném lượn nhẹ, servo tắt. Theo mô phỏng, máy lượn ở khoảng 4 m/s với α khoảng 11°.
 3. Bật vỗ ±20° ở 2,5 Hz (`fd` ≈ 222 µs, `ys` ≈ 11 100 µs). Mô phỏng cho thấy ±15° gần như bay ngang (leo 0,1 m/s) và ±30° leo 1,3 m/s, nên dùng biên độ như cần ga. Rẽ bằng lệch biên độ hai cánh.
 4. Sau mỗi lần bay 2 phút, sờ thử nhiệt độ servo.

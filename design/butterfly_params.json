@@ -38,12 +38,33 @@
   "body": {
     "spine": {"x_front": 35.0, "length": 250.0, "section": 2.0, "z_centre": -2.8},
     "tray": {"centre_x": -60.0, "length": 75.0, "width": 20.0, "esp32": [22.5, 18.0], "buck": [17.0, 11.0]},
-    "battery": {"centre_x": -66.9, "size": [32.0, 20.0, 11.0], "mass_g": 11.0},
+    "battery": {"centre_x": -73.5, "size": [32.0, 20.0, 11.0], "mass_g": 11.0},
     "esp32_mass_g": 1.6, "buck_mass_g": 1.5,
     "wires": {"mass_g": 3.0, "x": -5.0}
   },
 
-  "materials_g_cm3": {"PLA": 1.24, "carbon": 1.55},
+  "printed": {
+    "_note": "sizes chosen from analysis/printed_parts_check.py: socket-root bending stress <= ~6 MPa (PETG, 100 % infill)",
+    "hub": {
+      "clearance_to_servo_face": 1.0,
+      "clamp_wall": 2.0,
+      "clamp_half_height": 4.5,
+      "clamp_y_start_from_shaft": 4.8,
+      "le_boss_od": 7.2, "le_boss_tip_od": 4.6,
+      "rod_boss_od": 4.6, "rod_boss_tip_od": 3.2,
+      "le_boss_len": 20.0, "rod_boss_len": 16.0,
+      "bore_start": 3.0,
+      "core_sphere_extra": 0.8,
+      "web_radius": 1.6, "web_stations": [4.0, 8.0],
+      "screw_d": 2.2, "screw_y_from_root": [5.2, 10.2]
+    },
+    "conn_wall": 1.2, "conn_sleeve_wall": 1.0,
+    "conn_sleeve_len": 12.0,
+    "frame_wall": 1.6,
+    "sleeve_half_width": 2.6
+  },
+
+  "materials_g_cm3": {"PLA": 1.24, "PETG": 1.27, "carbon": 1.55},
 
   "flight": {"f_hz": 2.5, "amp_deg": 20.0, "eta": 0.6, "target_cg_behind_le_mm": 20.0}
 }

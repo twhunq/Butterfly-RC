@@ -148,18 +148,20 @@ def build():
     put(c, bl)
 
     # ------------------------------------------------------------------ frame: servo band + spine clamp
+    PR = prm["printed"]
+    SW = PR["sleeve_half_width"]                       # spine sleeves: wall ~1.5 mm round the 2 mm tube
     c = new_comp("PRINT_Frame_ServoMount")
-    IY, IZ0, IZ1, Wl = Wd + CL, 0.0, L + 2 * CL, 1.2
+    IY, IZ0, IZ1, Wl = Wd + CL, 0.0, L + 2 * CL, PR["frame_wall"]
     bx0, bx1 = OF + H - 12, OF + H - 2
     f = box(bx0, bx1, -(IY + Wl), IY + Wl, IZ0 - Wl, IZ1 + Wl)
     sub(f, box(bx0 - 1, bx1 + 1, -IY, IY, IZ0, IZ1))
     xm = (bx0 + bx1) / 2
-    sub(f, cyl((xm, -20, 12), (xm, 20, 12), 3.5))
-    sub(f, cyl((xm, 0, -10), (xm, 0, 40), 3.0))
+    sub(f, cyl((xm, -20, 12), (xm, 20, 12), 2.5))
+    sub(f, cyl((xm, 0, 10), (xm, 0, 40), 2.5))           # top window only; the bottom stays solid over the sleeve
     sp = BD["spine"]
     hs = sp["section"] / 2 + 0.075
     zc = sp["z_centre"]
-    add(f, box(OF + 2, OF + H + 1.5, -2.2, 2.2, zc - 2.2, -0.6))
+    add(f, box(OF + 2, OF + H + 1.5, -SW, SW, zc - SW, IZ0 - Wl + 0.2))
     sub(f, box(OF + 1, OF + H + 2.5, -hs, hs, zc - hs, zc + hs))
     put(c, [("Frame_ServoMount", f)])
 
@@ -172,7 +174,8 @@ def build():
     tr, bt = BD["tray"], BD["battery"]
     tc, tl, tw = tr["centre_x"], tr["length"], tr["width"] / 2
     c = new_comp("PRINT_Tray_Abdomen")
-    t = box(tc - tl / 2, tc + tl / 2, -2.2, 2.2, zc - 2.2, -0.6)
+    TW = 2.2                                           # tray sleeve: light duty, keep it slim
+    t = box(tc - tl / 2, tc + tl / 2, -TW, TW, zc - TW, -0.6)
     add(t, box(tc - tl / 2, tc + tl / 2, -tw, tw, -0.6, 0.2))
     esp_x1 = tc + tl / 2 - 5
     esp_x0 = esp_x1 - tr["esp32"][0]
@@ -193,7 +196,7 @@ def build():
     put(c, [("Tray_Abdomen", t)])
     c = new_comp("REF_Battery_2S_180mAh")
     bL, bW, bH = bt["size"]
-    put(c, [("Battery", box(bx - bL / 2, bx + bL / 2, -bW / 2, bW / 2, zc - 2.2 - 0.6 - bH, zc - 2.2 - 0.6))])
+    put(c, [("Battery", box(bx - bL / 2, bx + bL / 2, -bW / 2, bW / 2, zc - TW - 0.6 - bH, zc - TW - 0.6))])
 
     # ------------------------------------------------------------------ wings: one folded membrane + rods per side
     rods = wing.rods()
@@ -204,21 +207,38 @@ def build():
     for sgn, side in ((1, "R"), (-1, "L")):
         c = new_comp("WING_%s_Assembly" % side)
         S = M(wing.R, sgn)
-        # horn adapter: clamps the outer end of the stock horn arm (slot) + M2 screw; LE, fold and root-rod sockets
-        y0, y1 = sorted((sgn * (Sy - 10), sgn * Sy))
-        a = box(HX0 - 1.5, HX0 + HT + 1.0, y0, y1, SHZ - 4, SHZ + 4)
-        sy0, sy1 = sorted((sgn * (Sy - 11.2), sgn * (Sy - 2.0)))
+        # wing hub (one solid printed part): clamp block round the outer end of the stock horn arm (2 x M2 through),
+        # tapered LE / fold / root sockets fused to a core sphere at the root point, with webs between them
+        HB = PR["hub"]
+        cw = HB["clamp_wall"]
+        hx0 = HX0 - cw
+        hx1 = min(HX0 + HT + cw, OF - HB["clearance_to_servo_face"])
+        yin = SHY + HB["clamp_y_start_from_shaft"]                     # clear of the horn's central disc
+        y0, y1 = sorted((sgn * yin, sgn * (Sy + 2.5)))
+        hz = HB["clamp_half_height"]
+        a = box(hx0, hx1, y0, y1, SHZ - hz, SHZ + hz)                   # clamp block
+        add(a, tbm.createSphere(P(*S), (HB["le_boss_od"] / 2 + HB["core_sphere_extra"]) * MM))     # core at the root point
+        dirs = {nm: mdir(rod[nm]["a"], rod[nm]["b"], sgn, nm in wing.HIND_RODS) for nm in ("LE", "Fold", "Root")}
+        # tapered sockets: bending moment is largest at the root (hub) and falls towards the mouth
+        geo = {"LE": (HB["le_boss_od"] / 2, HB["le_boss_tip_od"] / 2, LE_BORE, HB["le_boss_len"]),
+               "Fold": (HB["rod_boss_od"] / 2, HB["rod_boss_tip_od"] / 2, rod["Fold"]["od"] / 2 + 0.025, HB["rod_boss_len"]),
+               "Root": (HB["rod_boss_od"] / 2, HB["rod_boss_tip_od"] / 2, rod["Root"]["od"] / 2 + 0.025, HB["rod_boss_len"])}
+        for nm, (r0, r1, _, bl) in geo.items():
+            p0, p1 = along(S, dirs[nm], -1.5), along(S, dirs[nm], bl)
+            add(a, tbm.createCylinderOrCone(P(*p0), r0 * MM, P(*p1), r1 * MM))
+        for n1, n2 in (("LE", "Fold"), ("Fold", "Root")):                # webs between neighbouring sockets
+            for t in HB["web_stations"]:
+                add(a, cyl(along(S, dirs[n1], t), along(S, dirs[n2], t), HB["web_radius"]))
+        sy0, sy1 = sorted((sgn * (yin - 1.0), sgn * (Sy - 1.0)))         # horn slot, open towards the shaft
         sub(a, box(HX0 - 0.05, HX0 + HT + 0.05, sy0, sy1, SHZ - SV["horn_width"] / 2 - 0.1, SHZ + SV["horn_width"] / 2 + 0.1))
-        sub(a, cyl((HX0 - 3, sgn * (Sy - 5.2), SHZ), (HX0 + HT + 3, sgn * (Sy - 5.2), SHZ), 1.1))
-        for nm, boss_r, bore_r, blen in (("LE", LE_BORE + 0.9, LE_BORE, 16), ("Fold", 1.4, rod["Fold"]["od"] / 2 + 0.025, 13),
-                                         ("Root", 1.4, rod["Root"]["od"] / 2 + 0.025, 13)):
-            d = mdir(rod[nm]["a"], rod[nm]["b"], sgn, nm in wing.HIND_RODS)
-            add(a, cyl(S, along(S, d, blen), boss_r))
-            sub(a, cyl(along(S, d, 3), along(S, d, blen + 1), bore_r))
+        for ys in HB["screw_y_from_root"]:
+            sub(a, cyl((hx0 - 1, sgn * (Sy - ys), SHZ), (hx1 + 1, sgn * (Sy - ys), SHZ), HB["screw_d"] / 2))
+        for nm, (_, _, bore, bl) in geo.items():                          # rod bores, cut last
+            sub(a, cyl(along(S, dirs[nm], HB["bore_start"]), along(S, dirs[nm], bl + 1), bore))
         hy0, hy1 = sorted((sgn * (SHY - 3), sgn * (SHY + SV["horn_len"])))
         horn = box(HX0, HX0 + HT, hy0, hy1, SHZ - 2.75, SHZ + 2.75)
         add(horn, cyl((HX0, sgn * SHY, SHZ), (HX0 + HT, sgn * SHY, SHZ), 3.5))
-        bodies = [("PRINT_HornAdapter_" + side, a), ("REF_ServoHorn_" + side, horn)]
+        bodies = [("PRINT_WingHub_" + side, a), ("REF_ServoHorn_" + side, horn)]
         for r in rods:
             hr = r["name"] in wing.HIND_RODS
             A3, B3 = M(r["a"], sgn, hr), M(r["b"], sgn, hr)
@@ -232,10 +252,12 @@ def build():
                 host = rod[r["on"]]
                 hd = mdir(host["a"], host["b"], sgn, host["name"] in wing.HIND_RODS)
                 hb = host["od"] / 2 + 0.025
-                k = cyl(along(A3, hd, -6), along(A3, hd, 6), hb + 0.8)
-                add(k, cyl(A3, along(A3, d, host["od"] / 2 + 9), r["od"] / 2 + 0.8))
-                sub(k, cyl(along(A3, hd, -7), along(A3, hd, 7), hb))
-                sub(k, cyl(along(A3, d, host["od"] / 2 + 1.0), along(A3, d, host["od"] / 2 + 10), r["od"] / 2 + 0.025))
+                cwl, sl = PR["conn_wall"], PR["conn_sleeve_len"] / 2
+                k = cyl(along(A3, hd, -sl), along(A3, hd, sl), hb + PR["conn_sleeve_wall"])
+                add(k, cyl(A3, along(A3, d, host["od"] / 2 + 11), r["od"] / 2 + 0.025 + cwl))
+                add(k, tbm.createSphere(P(*along(A3, d, host["od"] / 2 + 0.6)), (r["od"] / 2 + cwl + 0.4) * MM))   # fillet the T-joint
+                sub(k, cyl(along(A3, hd, -sl - 1), along(A3, hd, sl + 1), hb))
+                sub(k, cyl(along(A3, d, host["od"] / 2 + 1.0), along(A3, d, host["od"] / 2 + 12), r["od"] / 2 + 0.025))
                 bodies.append(("PRINT_Conn%s_%s" % (r["name"][-1], side), k))
         bodies += [("Membrane_ForePanel_" + side, face(fore_poly, sgn, False)), ("Membrane_HindPanel_" + side, face(hind_poly, sgn, True))]
         put(c, bodies)
@@ -309,7 +331,7 @@ def build():
 
     # ------------------------------------------------------------------ mass properties -> json
     dens_pla, dens_cf = prm["materials_g_cm3"]["PLA"], prm["materials_g_cm3"]["carbon"]
-    dens = {"PRINT": dens_pla, "Frame": dens_pla, "Tray": dens_pla,
+    dens = {"PRINT": prm["materials_g_cm3"]["PETG"], "Frame": dens_pla, "Tray": dens_pla,
             "LE": dens_cf, "Fold": dens_cf, "Root": dens_cf, "Vein": dens_cf, "Spine": dens_cf}
 
     def poly_centroid(poly):
@@ -366,6 +388,8 @@ def build():
            "inertia_body_frd_kgm2": [[round(v, 9) for v in row] for row in I],
            "membrane_area_per_side_cm2": {"fore_panel": round(fA / 100, 1), "hind_panel": round(hA / 100, 1)},
            "fold_angle_deg": round(math.degrees(wing.beta), 2),
+           "printed_parts": {b.name: {"lumps": b.lumps.count, "volume_cm3": round(b.physicalProperties.volume, 3)}
+                             for o in root.occurrences for b in o.bRepBodies if b.name.startswith(("PRINT_", "Frame_", "Tray_"))},
            "items": [{"name": n, "mass_g": round(m, 3), "pos_mm": [round(v, 1) for v in p]} for n, m, p in items]}
     with open(os.path.join(HERE, "fusion_mass_properties.json"), "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=2)

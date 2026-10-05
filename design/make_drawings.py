@@ -47,7 +47,7 @@ def cut_list():
     for r in W.rods():
         if r["on"] is None:
             insert = SOCKET_BORE_START
-            where = "khớp nối tay servo (gốc R)"
+            where = "hub gốc cánh (gốc R)"
         else:
             insert = rods[r["on"]]["od"] / 2 + CONN_BORE_START
             where = "khớp %s trên que %s, cách R %.0f mm" % (r["name"][-1], r["on"], r["t"])
@@ -235,7 +235,7 @@ def main():
     for r in rows:
         md.append("| %s | %s | %.1f | **%.1f** | %s | %s | %s |" % (r["name"], r["mat"], r["L"], r["cut"], r["panel"], r["where"], r["ang"] or "—"))
     fa, ha = W.areas()
-    md += ["", "- Chiều dài cắt = dài thiết kế trừ phần nằm trong lỗ khớp (khớp nối tay servo: lỗ bắt đầu cách R %.0f mm; khớp gân: cách mặt que gốc %.0f mm)." % (SOCKET_BORE_START, CONN_BORE_START),
+    md += ["", "- Chiều dài cắt = dài thiết kế trừ phần nằm trong lỗ khớp (hub gốc cánh: lỗ bắt đầu cách R %.0f mm; khớp gân: cách mặt que gốc %.0f mm)." % (SOCKET_BORE_START, CONN_BORE_START),
            "- Màng mỗi bên: %.0f cm² (tấm trước %.0f, tấm sau %.0f) + mép bọc %d mm quanh que cạnh trước và que gốc." % ((fa + ha) / 100, fa / 100, ha / 100, WRAP),
            "- Gấp: phần sau gập xuống %.2f° quanh que gấp R–N → cánh sau cúi %.1f°, rủ thêm %.1f°." % (math.degrees(W.beta), abs(P["wing"]["hind_incidence_deg"]), math.degrees(W.hind_extra_anhedral)),
            "- Xương sống: ống carbon vuông %.0f mm, dài %.0f mm (1 cây)." % (P["body"]["spine"]["section"], P["body"]["spine"]["length"])]

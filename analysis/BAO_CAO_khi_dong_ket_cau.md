@@ -29,12 +29,12 @@ Không còn kích thước viết tay ở bất kỳ đâu.
 | Hạng mục | Giá trị |
 |---|---|
 | Sải cánh / diện tích / AR | 805mm (ở góc nhị diện nghỉ) / 16,23 dm² / 4,1 |
-| Khối lượng (Fusion) | **60,4g**; tải cánh 3,7 g/dm² |
+| Khối lượng (Fusion) | **63,8g** (hub gốc cánh liền khối, PETG); tải cánh 3,9 g/dm² |
 | Trọng tâm | **20,0mm** sau mép trước gốc cánh, 6,9mm dưới gốc cánh |
 | Servo | 2 × PTK 7465Plus quay ngược, thân servo làm "ngực" phía trước gốc cánh |
-| Thân | Xương sống ống carbon vuông 2mm × 250mm. Khay "bụng" ESP32‑C3 + buck; pin 2S 180mAh buộc dưới khay (tâm x = −66,9mm) |
+| Thân | Xương sống ống carbon vuông 2mm × 250mm. Khay "bụng" ESP32‑C3 + buck; pin 2S 180mAh buộc dưới khay (tâm x = −73,5mm) |
 | **Cánh** | **Một tấm màng liền mỗi bên.** Mép trước thẳng theo ống carbon 2,0 × 1,0mm; mép gốc thẳng theo que 1,0mm |
-| **Đường gấp** | Que 1,0mm từ gốc R tới đỉnh chỗ khuyết N. Tấm sau gập xuống **7,26°**, cho góc cúi **−5°** và rủ thêm 5,3°. Hướng lỗ trong khớp nối tay servo tạo sẵn góc này |
+| **Đường gấp** | Que 1,0mm từ gốc R tới đỉnh chỗ khuyết N. Tấm sau gập xuống **7,26°**, cho góc cúi **−5°** và rủ thêm 5,3°. Hướng lỗ trong hub gốc cánh tạo sẵn góc này |
 | Gân | A Ø1,0 và B Ø0,8 trên ống cạnh trước; C Ø0,8 trên que đường gấp (đỡ thùy sau) |
 | Diện tích màng mỗi bên | Tấm trước 513 cm², tấm sau 299 cm² |
 
@@ -99,3 +99,29 @@ Giới hạn của mô phỏng:
 | `butterfly_aero.py` | Quét nhanh tần số, biên độ, que, giới hạn servo |
 | Fusion 360 | CAD, khớp `Flap_R` / `Flap_L`, kiểm tra va chạm (không va chạm ở ±45°), xuất STL |
 | Nếu cần sâu hơn | OpenFOAM / Fluent (CFD có thất tốc); preCICE + CalculiX (tương tác khí – màng) |
+
+## 8. Chi tiết in 3D: liền khối và đủ bền (`printed_parts_check.py`)
+
+Bản trước dùng khớp nối tay servo nhỏ (khối 4,5 × 10 × 8mm), 3 ống cắm mảnh thành 0,9mm và chỉ 1 vít. Ứng suất ở gốc ống cắm khoảng 22–27 MPa, ngang với độ bền bám lớp của PETG, nên sẽ nứt khi chịu vỗ cánh liên tục.
+
+Bản mới là **hub gốc cánh** (`PRINT_WingHub_R/L`), **1 khối liền** (Fusion xác nhận 1 khối), nặng 1,72g mỗi bên, gồm:
+- khối kẹp tay servo, thành 2mm, 2 bulông M2 xuyên qua;
+- lõi cầu ở gốc;
+- 3 ống cắm côn: que cạnh trước Ø7,2 → Ø4,6mm, que gấp và que gốc Ø4,6 → Ø3,2mm;
+- gân nối giữa các ống.
+
+Khớp gân có ống luồn thành 1,0mm, ống cắm thành 1,2mm, chỗ nối chữ T được bo tròn. Khung servo có thành 1,6mm, ống kẹp xương sống thành khoảng 1,5mm.
+
+| Mặt cắt (tải xấu nhất) | Ứng suất | Hệ số an toàn mỏi |
+|---|---|---|
+| Ống cắm que cạnh trước, gốc / giữa | 3,8 / 3,5 MPa | 2,1 / 2,3 |
+| Ống cắm que gấp / que gốc, gốc / giữa | 5,0 / 4,1 MPa | 1,6 / 1,9 |
+| Ống cắm của khớp gân | 4,1 MPa | 1,9 |
+| Bulông M2 kẹp tay servo | 8,3 N mỗi bulông, ép mặt 1,9 MPa | rất dư |
+
+Mọi chi tiết in đều là 1 khối liền. Không va chạm ở 0° / ±36° / ±45°. Tổng khối lượng tăng lên 63,8g; pin dời về x = −73,5mm để giữ trọng tâm ở 20,0mm.
+
+Kiểm tra lại sau khi đổi sang hub mới (63,8g; file `results/freeflight/m63_*.csv`):
+- Dự trữ ổn định vẫn 17,4mm.
+- Bay tự do ở ±20° vẫn ổn định: góc thân 14,6°, α 9,3°, tốc độ 4,3 m/s, leo 0,39 m/s (bản 60,4g leo 0,45 m/s).
+- Khuyến nghị bay thử không đổi: bắt đầu ở ±20°.
