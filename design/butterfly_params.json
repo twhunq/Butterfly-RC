@@ -36,9 +36,9 @@
   },
 
   "body": {
-    "spine": {"x_front": 35.0, "length": 250.0, "section": 2.0, "z_centre": -2.8},
+    "spine": {"x_front": 35.0, "length": 250.0, "section": 2.0, "z_centre": -7.7, "ear_clearance": 0.8},
     "tray": {"centre_x": -60.0, "length": 75.0, "width": 20.0, "esp32": [22.5, 18.0], "buck": [17.0, 11.0]},
-    "battery": {"centre_x": -73.5, "size": [32.0, 20.0, 11.0], "mass_g": 11.0},
+    "battery": {"centre_x": -75.2, "size": [32.0, 20.0, 11.0], "mass_g": 11.0},
     "esp32_mass_g": 1.6, "buck_mass_g": 1.5,
     "wires": {"mass_g": 3.0, "x": -5.0}
   },

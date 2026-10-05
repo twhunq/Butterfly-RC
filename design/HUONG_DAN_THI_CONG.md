@@ -89,7 +89,7 @@ Kiểm tra bền (`analysis/printed_parts_check.py`, với tải xấu nhất): 
 
 1. Lắp 2 servo quay lưng vào nhau vào khung servo, **trục ra hướng về phía sau** (về phía đuôi).
 2. Luồn xương sống 250mm qua ống kẹp của khung (thò ra trước 35mm), rồi luồn khay bụng.
-3. Đặt ESP32‑C3 và mạch buck vào ô trên khay. Buộc pin dưới khay bằng 2 dây rút qua 2 rãnh. Tâm pin ở x = −73,5mm, tức là cách mặt phẳng hub gốc cánh 73,5mm về phía sau.
+3. Đặt ESP32‑C3 và mạch buck vào ô trên khay. Buộc pin dưới khay bằng 2 dây rút qua 2 rãnh. Tâm pin ở x = −75,2mm, tức là cách mặt phẳng hub gốc cánh 75,2mm về phía sau.
 4. Cho servo về vị trí giữa (1500 µs), lắp tay servo nằm ngang hướng ra ngoài, gắn khớp nối cánh vào tay servo và bắt vít M2.
 5. Đi dây:
    - pin → mạch buck 5V → chân 5V của ESP32;

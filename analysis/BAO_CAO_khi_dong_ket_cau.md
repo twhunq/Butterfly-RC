@@ -29,10 +29,10 @@ Không còn kích thước viết tay ở bất kỳ đâu.
 | Hạng mục | Giá trị |
 |---|---|
 | Sải cánh / diện tích / AR | 805mm (ở góc nhị diện nghỉ) / 16,23 dm² / 4,1 |
-| Khối lượng (Fusion) | **63,8g** (hub gốc cánh liền khối, PETG); tải cánh 3,9 g/dm² |
+| Khối lượng (Fusion) | **64,2g** (hub gốc cánh liền khối, PETG); tải cánh 4,0 g/dm² |
 | Trọng tâm | **20,0mm** sau mép trước gốc cánh, 6,9mm dưới gốc cánh |
 | Servo | 2 × PTK 7465Plus quay ngược, thân servo làm "ngực" phía trước gốc cánh |
-| Thân | Xương sống ống carbon vuông 2mm × 250mm. Khay "bụng" ESP32‑C3 + buck; pin 2S 180mAh buộc dưới khay (tâm x = −73,5mm) |
+| Thân | Xương sống ống carbon vuông 2mm × 250mm. Khay "bụng" ESP32‑C3 + buck; pin 2S 180mAh buộc dưới khay (tâm x = −75,2mm) |
 | **Cánh** | **Một tấm màng liền mỗi bên.** Mép trước thẳng theo ống carbon 2,0 × 1,0mm; mép gốc thẳng theo que 1,0mm |
 | **Đường gấp** | Que 1,0mm từ gốc R tới đỉnh chỗ khuyết N. Tấm sau gập xuống **7,26°**, cho góc cúi **−5°** và rủ thêm 5,3°. Hướng lỗ trong hub gốc cánh tạo sẵn góc này |
 | Gân | A Ø1,0 và B Ø0,8 trên ống cạnh trước; C Ø0,8 trên que đường gấp (đỡ thùy sau) |
@@ -125,3 +125,10 @@ Kiểm tra lại sau khi đổi sang hub mới (63,8g; file `results/freeflight/
 - Dự trữ ổn định vẫn 17,4mm.
 - Bay tự do ở ±20° vẫn ổn định: góc thân 14,6°, α 9,3°, tốc độ 4,3 m/s, leo 0,39 m/s (bản 60,4g leo 0,45 m/s).
 - Khuyến nghị bay thử không đổi: bắt đầu ở ±20°.
+
+### Sửa va chạm tai servo – khung (sau khi rà soát)
+
+- Tai bắt vít servo nhô dưới đáy servo 4,5mm (tới z = −4,3mm) và trước đó đâm xuyên ống kẹp xương sống (z −5,4 đến −1,4mm). Lỗi lọt qua vì trước đây chỉ kiểm tra va chạm cánh với thân.
+- Đã sửa: xương sống hạ xuống z = −7,7mm (khe hở 0,8mm dưới tai servo). Khung servo nối xuống ống kẹp bằng vách đứng chỉ nằm dưới đai ôm servo. Khay bụng và pin hạ theo.
+- `fusion_build.py` nay **tự kiểm tra va chạm giữa mọi chi tiết thân** (servo, khung, khay, xương sống, pin, hub, que) và ghi vào `fusion_mass_properties.json` → `static_clashes`. Kết quả hiện tại: rỗng.
+- Kết quả sau sửa: khối lượng 64,2g, trọng tâm 20,0mm (pin x = −75,2mm), dự trữ ổn định 17,5mm, không va chạm ở ±45°.

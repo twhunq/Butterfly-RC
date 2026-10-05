@@ -160,8 +160,11 @@ def build():
     sub(f, cyl((xm, 0, 10), (xm, 0, 40), 2.5))           # top window only; the bottom stays solid over the sleeve
     sp = BD["spine"]
     hs = sp["section"] / 2 + 0.075
-    zc = sp["z_centre"]
-    add(f, box(OF + 2, OF + H + 1.5, -SW, SW, zc - SW, IZ0 - Wl + 0.2))
+    # the servo mounting ears overhang the servo bottom: run the spine and its sleeve below them
+    ear_bottom = CL - SV["ear_overhang"]
+    zc = min(sp["z_centre"], ear_bottom - sp.get("ear_clearance", 0.8) - SW)
+    add(f, box(bx0, bx1, -SW, SW, zc, IZ0 - Wl + 0.2))                 # web: only under the band, clear of the ears
+    add(f, box(OF + 2, OF + H + 1.5, -SW, SW, zc - SW, zc + SW))         # sleeve below the ears
     sub(f, box(OF + 1, OF + H + 2.5, -hs, hs, zc - hs, zc + hs))
     put(c, [("Frame_ServoMount", f)])
 
@@ -175,8 +178,10 @@ def build():
     tc, tl, tw = tr["centre_x"], tr["length"], tr["width"] / 2
     c = new_comp("PRINT_Tray_Abdomen")
     TW = 2.2                                           # tray sleeve: light duty, keep it slim
-    t = box(tc - tl / 2, tc + tl / 2, -TW, TW, zc - TW, -0.6)
-    add(t, box(tc - tl / 2, tc + tl / 2, -tw, tw, -0.6, 0.2))
+    zt0 = zc + TW                                      # tray plate sits right on its sleeve
+    zt1 = zt0 + 0.8
+    t = box(tc - tl / 2, tc + tl / 2, -TW, TW, zc - TW, zt0 + 0.01)
+    add(t, box(tc - tl / 2, tc + tl / 2, -tw, tw, zt0, zt1))
     esp_x1 = tc + tl / 2 - 5
     esp_x0 = esp_x1 - tr["esp32"][0]
     buck_x1 = esp_x0 - 4
@@ -185,13 +190,13 @@ def build():
     def posts(x0, x1, hy):
         for xx in (x0 - 1.2, x1):
             for yy in (hy, -hy - 1.2):
-                add(t, box(xx, xx + 1.2, yy, yy + 1.2, 0.2, 1.9))
+                add(t, box(xx, xx + 1.2, yy, yy + 1.2, zt1, zt1 + 1.7))
     posts(esp_x0, esp_x1, tr["esp32"][1] / 2 + 0.1)
     posts(buck_x0, buck_x1, tr["buck"][1] / 2 + 0.1)
     bx = bt["centre_x"]
     for xx in (bx - bt["size"][0] / 2 - 3.5, bx + bt["size"][0] / 2 + 0.5):      # zip-tie slots at the battery ends
-        sub(t, box(xx, xx + 3, 3.5, 8.5, -6, 2))
-        sub(t, box(xx, xx + 3, -8.5, -3.5, -6, 2))
+        sub(t, box(xx, xx + 3, 3.5, 8.5, zt0 - 2, zt1 + 1))
+        sub(t, box(xx, xx + 3, -8.5, -3.5, zt0 - 2, zt1 + 1))
     sub(t, box(tc - tl / 2 - 1, tc + tl / 2 + 1, -hs, hs, zc - hs, zc + hs))
     put(c, [("Tray_Abdomen", t)])
     c = new_comp("REF_Battery_2S_180mAh")
@@ -329,6 +334,21 @@ def build():
     except Exception:
         pass
 
+    # ------------------------------------------------------------------ static interference (body parts with each other)
+    statics = [(o.component.name + "/" + b.name, b) for o in root.occurrences
+               if o.component.name.startswith(("REF_Servo", "PRINT_Frame", "PRINT_Tray", "REF_Spine", "REF_Battery", "WING_"))
+               for b in o.bRepBodies if b.isSolid and not b.name.startswith(("REF_ServoHorn",))]
+    clashes = []
+    for i in range(len(statics)):
+        for k in range(i + 1, len(statics)):
+            (n1, b1), (n2, b2) = statics[i], statics[k]
+            if n1.split("/")[0] == n2.split("/")[0] and n1.startswith("WING_"):
+                continue                                  # parts of one wing touch by design (rods in sockets)
+            a_ = tbm.copy(b1)
+            tbm.booleanOperation(a_, tbm.copy(b2), adsk.fusion.BooleanTypes.IntersectionBooleanType)
+            if a_.volume > 1e-6:
+                clashes.append("%s x %s (%.4f cm3)" % (n1, n2, a_.volume))
+
     # ------------------------------------------------------------------ mass properties -> json
     dens_pla, dens_cf = prm["materials_g_cm3"]["PLA"], prm["materials_g_cm3"]["carbon"]
     dens = {"PRINT": prm["materials_g_cm3"]["PETG"], "Frame": dens_pla, "Tray": dens_pla,
@@ -371,8 +391,8 @@ def build():
                     continue
                 m = pp.volume * dens[key]
             items.append((nm, m, pos))
-    items.append(("ESP32-C3 Super Mini", BD["esp32_mass_g"], ((esp_x0 + esp_x1) / 2, 0.0, 1.0)))
-    items.append(("Buck 5V", BD["buck_mass_g"], ((buck_x0 + buck_x1) / 2, 0.0, 1.0)))
+    items.append(("ESP32-C3 Super Mini", BD["esp32_mass_g"], ((esp_x0 + esp_x1) / 2, 0.0, zt1 + 1.0)))
+    items.append(("Buck 5V", BD["buck_mass_g"], ((buck_x0 + buck_x1) / 2, 0.0, zt1 + 1.5)))
     items.append(("Wires/glue", BD["wires"]["mass_g"], (BD["wires"]["x"], 0.0, 8.0)))
     Mt = sum(m for _, m, _ in items)
     cg = [sum(m * p[i] for _, m, p in items) / Mt for i in range(3)]
@@ -388,6 +408,8 @@ def build():
            "inertia_body_frd_kgm2": [[round(v, 9) for v in row] for row in I],
            "membrane_area_per_side_cm2": {"fore_panel": round(fA / 100, 1), "hind_panel": round(hA / 100, 1)},
            "fold_angle_deg": round(math.degrees(wing.beta), 2),
+           "spine_z_centre_mm": round(zc, 2),
+           "static_clashes": clashes,
            "printed_parts": {b.name: {"lumps": b.lumps.count, "volume_cm3": round(b.physicalProperties.volume, 3)}
                              for o in root.occurrences for b in o.bRepBodies if b.name.startswith(("PRINT_", "Frame_", "Tray_"))},
            "items": [{"name": n, "mass_g": round(m, 3), "pos_mm": [round(v, 1) for v in p]} for n, m, p in items]}

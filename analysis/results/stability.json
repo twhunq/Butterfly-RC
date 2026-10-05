@@ -1,10 +1,10 @@
 {
   "cg_mm": 20.0,
-  "neutral_point_mm": 37.4,
-  "static_margin_mm": 17.4,
-  "alpha_trim_glide": 10.99,
-  "glide_speed_m_s": 4.13,
-  "dMy_dalpha": -0.0010088366463639241,
+  "neutral_point_mm": 37.5,
+  "static_margin_mm": 17.5,
+  "alpha_trim_glide": 10.9,
+  "glide_speed_m_s": 4.14,
+  "dMy_dalpha": -0.0010198262941151308,
   "static_alpha": [
     2.0,
     6.0,
@@ -16,15 +16,15 @@
     0.4494
   ],
   "static_My": [
-    0.00863,
-    0.00591,
-    0.00056
+    0.00864,
+    0.00589,
+    0.00048
   ],
   "flapping_at_trim": {
     "f": 2.5,
     "amp": 20.0,
-    "lift_over_W": 1.209,
-    "thrust_N": 0.0332,
-    "My": -0.00452
+    "lift_over_W": 1.192,
+    "thrust_N": 0.0339,
+    "My": -0.00455
   }
 }
