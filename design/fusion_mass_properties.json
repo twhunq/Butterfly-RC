@@ -1,140 +1,162 @@
 {
-  "mass_g": 64.24,
+  "mass_g": 70.659,
   "cg_mm": [
-    -20.0,
+    -22.51,
     0.0,
-    10.0
+    9.7
   ],
-  "cg_behind_le_mm": 20.0,
-  "cg_below_wing_root_mm": 7.9,
+  "cg_behind_le_mm": 22.51,
+  "cg_below_wing_root_mm": 8.1,
   "inertia_body_frd_kgm2": [
     [
-      0.000341265,
+      0.000350532,
       -1e-09,
-      1.5558e-05
+      6.679e-06
     ],
     [
       -1e-09,
-      0.000175749,
+      0.000219853,
       1e-09
     ],
     [
-      1.5558e-05,
+      6.679e-06,
       1e-09,
-      0.000470655
+      0.000521992
     ]
   ],
   "membrane_area_per_side_cm2": {
-    "fore_panel": 512.9,
-    "hind_panel": 298.8
+    "fore_panel": 470.1,
+    "hind_panel": 374.2
   },
-  "fold_angle_deg": 7.26,
-  "spine_z_centre_mm": -7.7,
+  "fold_angle_deg": 6.62,
+  "spine_z_centre_mm": -7.52,
+  "spine_length_mm": 154.1,
   "static_clashes": [],
   "printed_parts": {
     "Frame_ServoMount": {
       "lumps": 1,
-      "volume_cm3": 2.327
+      "volume_cm3": 2.998
     },
-    "Tray_Abdomen": {
+    "PRINT_BattMount": {
       "lumps": 1,
-      "volume_cm3": 2.277
+      "volume_cm3": 0.969
+    },
+    "PRINT_AvionicsMount": {
+      "lumps": 1,
+      "volume_cm3": 1.755
     },
     "PRINT_WingHub_R": {
       "lumps": 1,
-      "volume_cm3": 1.356
+      "volume_cm3": 1.38
     },
     "PRINT_ConnA_R": {
       "lumps": 1,
-      "volume_cm3": 0.199
+      "volume_cm3": 0.192
     },
     "PRINT_ConnB_R": {
       "lumps": 1,
-      "volume_cm3": 0.191
+      "volume_cm3": 0.169
     },
     "PRINT_ConnC_R": {
       "lumps": 1,
-      "volume_cm3": 0.137
+      "volume_cm3": 0.151
+    },
+    "PRINT_ConnD_R": {
+      "lumps": 1,
+      "volume_cm3": 0.147
     },
     "PRINT_WingHub_L": {
       "lumps": 1,
-      "volume_cm3": 1.356
+      "volume_cm3": 1.38
     },
     "PRINT_ConnA_L": {
       "lumps": 1,
-      "volume_cm3": 0.199
+      "volume_cm3": 0.192
     },
     "PRINT_ConnB_L": {
       "lumps": 1,
-      "volume_cm3": 0.191
+      "volume_cm3": 0.169
     },
     "PRINT_ConnC_L": {
       "lumps": 1,
-      "volume_cm3": 0.137
+      "volume_cm3": 0.151
+    },
+    "PRINT_ConnD_L": {
+      "lumps": 1,
+      "volume_cm3": 0.147
     }
   },
   "items": [
     {
-      "name": "Servo_R",
-      "mass_g": 13.2,
-      "pos_mm": [
-        18.2,
-        6.2,
-        12.1
-      ]
-    },
-    {
-      "name": "Servo_L",
-      "mass_g": 13.2,
-      "pos_mm": [
-        18.2,
-        -6.2,
-        12.1
-      ]
-    },
-    {
       "name": "Frame_ServoMount",
-      "mass_g": 2.886,
+      "mass_g": 3.717,
       "pos_mm": [
-        23.7,
+        21.6,
         -0.0,
-        5.7
+        6.7
       ]
     },
     {
-      "name": "Spine_2mm_tube_250",
-      "mass_g": 1.55,
+      "name": "Spine_3x2mm_tube_154",
+      "mass_g": 0.938,
       "pos_mm": [
-        -90.0,
-        -0.0,
-        -7.7
-      ]
-    },
-    {
-      "name": "Tray_Abdomen",
-      "mass_g": 2.823,
-      "pos_mm": [
-        -59.6,
+        -42.1,
         0.0,
-        -6.4
+        -7.5
+      ]
+    },
+    {
+      "name": "PRINT_BattMount",
+      "mass_g": 1.231,
+      "pos_mm": [
+        -39.1,
+        0.0,
+        -9.7
       ]
     },
     {
       "name": "Battery",
       "mass_g": 11.0,
       "pos_mm": [
-        -75.2,
+        -39.1,
         -0.0,
-        -16.0
+        -17.4
+      ]
+    },
+    {
+      "name": "PRINT_AvionicsMount",
+      "mass_g": 2.229,
+      "pos_mm": [
+        -100.2,
+        0.0,
+        -4.5
+      ]
+    },
+    {
+      "name": "Nano_board",
+      "mass_g": 5.0,
+      "pos_mm": [
+        -84.5,
+        0.0,
+        0.5
+      ]
+    },
+    {
+      "name": "NRF24_board",
+      "mass_g": 2.0,
+      "pos_mm": [
+        -123.6,
+        0.0,
+        -1.1
       ]
     },
     {
       "name": "PRINT_WingHub_R",
-      "mass_g": 1.722,
+      "mass_g": 1.752,
       "pos_mm": [
-        -1.1,
+        -1.2,
         25.4,
-        18.5
+        18.4
       ]
     },
     {
@@ -143,115 +165,133 @@
       "pos_mm": [
         0.2,
         13.3,
-        17.9
+        17.8
       ]
     },
     {
       "name": "LE_2.0mm_R",
-      "mass_g": 1.176,
+      "mass_g": 1.167,
       "pos_mm": [
-        17.5,
-        181.3,
-        48.4
+        15.0,
+        180.3,
+        48.1
       ]
     },
     {
       "name": "Fold_1.0mm_R",
-      "mass_g": 0.265,
+      "mass_g": 0.342,
       "pos_mm": [
-        -79.0,
-        97.8,
-        32.2
+        -92.0,
+        128.3,
+        38.0
       ]
     },
     {
       "name": "Root_1.0mm_R",
-      "mass_g": 0.303,
+      "mass_g": 0.308,
       "pos_mm": [
-        -122.1,
-        46.9,
-        13.4
+        -124.6,
+        46.0,
+        12.5
       ]
     },
     {
       "name": "VeinA_1.0mm_R",
-      "mass_g": 0.278,
+      "mass_g": 0.312,
       "pos_mm": [
-        -64.9,
-        206.9,
-        53.4
+        -56.0,
+        203.6,
+        52.7
       ]
     },
     {
       "name": "PRINT_ConnA_R",
-      "mass_g": 0.253,
+      "mass_g": 0.244,
       "pos_mm": [
-        8.9,
-        123.9,
-        37.3
+        5.1,
+        95.1,
+        31.6
       ]
     },
     {
       "name": "VeinB_0.8mm_R",
-      "mass_g": 0.134,
+      "mass_g": 0.163,
       "pos_mm": [
-        -32.4,
-        303.7,
-        72.2
+        -6.1,
+        291.8,
+        69.8
       ]
     },
     {
       "name": "PRINT_ConnB_R",
-      "mass_g": 0.242,
+      "mass_g": 0.215,
       "pos_mm": [
-        22.1,
-        240.9,
-        60.0
+        15.3,
+        192.9,
+        50.6
       ]
     },
     {
       "name": "VeinC_0.8mm_R",
-      "mass_g": 0.171,
+      "mass_g": 0.211,
       "pos_mm": [
-        -172.5,
-        157.8,
-        41.2
+        -173.8,
+        122.2,
+        28.9
       ]
     },
     {
       "name": "PRINT_ConnC_R",
-      "mass_g": 0.174,
+      "mass_g": 0.192,
       "pos_mm": [
-        -82.4,
-        100.1,
-        32.6
+        -48.9,
+        77.1,
+        27.9
+      ]
+    },
+    {
+      "name": "VeinD_0.8mm_R",
+      "mass_g": 0.141,
+      "pos_mm": [
+        -193.3,
+        189.9,
+        45.8
+      ]
+    },
+    {
+      "name": "PRINT_ConnD_R",
+      "mass_g": 0.186,
+      "pos_mm": [
+        -114.3,
+        151.5,
+        42.4
       ]
     },
     {
       "name": "Membrane_ForePanel_R",
-      "mass_g": 1.026,
+      "mass_g": 0.94,
       "pos_mm": [
-        -56.5,
-        236.7,
-        59.2
+        -55.0,
+        238.0,
+        59.4
       ]
     },
     {
       "name": "Membrane_HindPanel_R",
-      "mass_g": 0.598,
+      "mass_g": 0.748,
       "pos_mm": [
-        -182.2,
-        128.5,
-        31.8
+        -186.5,
+        133.4,
+        30.9
       ]
     },
     {
       "name": "PRINT_WingHub_L",
-      "mass_g": 1.722,
+      "mass_g": 1.752,
       "pos_mm": [
-        -1.1,
+        -1.2,
         -25.4,
-        18.5
+        18.4
       ]
     },
     {
@@ -260,124 +300,151 @@
       "pos_mm": [
         0.2,
         -13.3,
-        17.9
+        17.8
       ]
     },
     {
       "name": "LE_2.0mm_L",
-      "mass_g": 1.176,
+      "mass_g": 1.167,
       "pos_mm": [
-        17.5,
-        -181.3,
-        48.4
+        15.0,
+        -180.3,
+        48.1
       ]
     },
     {
       "name": "Fold_1.0mm_L",
-      "mass_g": 0.265,
+      "mass_g": 0.342,
       "pos_mm": [
-        -79.0,
-        -97.8,
-        32.2
+        -92.0,
+        -128.3,
+        38.0
       ]
     },
     {
       "name": "Root_1.0mm_L",
-      "mass_g": 0.303,
+      "mass_g": 0.308,
       "pos_mm": [
-        -122.1,
-        -46.9,
-        13.4
+        -124.6,
+        -46.0,
+        12.5
       ]
     },
     {
       "name": "VeinA_1.0mm_L",
-      "mass_g": 0.278,
+      "mass_g": 0.312,
       "pos_mm": [
-        -64.9,
-        -206.9,
-        53.4
+        -56.0,
+        -203.6,
+        52.7
       ]
     },
     {
       "name": "PRINT_ConnA_L",
-      "mass_g": 0.253,
+      "mass_g": 0.244,
       "pos_mm": [
-        8.9,
-        -123.9,
-        37.3
+        5.1,
+        -95.1,
+        31.6
       ]
     },
     {
       "name": "VeinB_0.8mm_L",
-      "mass_g": 0.134,
+      "mass_g": 0.163,
       "pos_mm": [
-        -32.4,
-        -303.7,
-        72.2
+        -6.1,
+        -291.8,
+        69.8
       ]
     },
     {
       "name": "PRINT_ConnB_L",
-      "mass_g": 0.242,
+      "mass_g": 0.215,
       "pos_mm": [
-        22.1,
-        -240.9,
-        60.0
+        15.4,
+        -192.9,
+        50.6
       ]
     },
     {
       "name": "VeinC_0.8mm_L",
-      "mass_g": 0.171,
+      "mass_g": 0.211,
       "pos_mm": [
-        -172.5,
-        -157.8,
-        41.2
+        -173.8,
+        -122.2,
+        28.9
       ]
     },
     {
       "name": "PRINT_ConnC_L",
-      "mass_g": 0.174,
+      "mass_g": 0.192,
       "pos_mm": [
-        -82.4,
-        -100.1,
-        32.6
+        -48.9,
+        -77.1,
+        27.9
+      ]
+    },
+    {
+      "name": "VeinD_0.8mm_L",
+      "mass_g": 0.141,
+      "pos_mm": [
+        -193.3,
+        -189.9,
+        45.8
+      ]
+    },
+    {
+      "name": "PRINT_ConnD_L",
+      "mass_g": 0.186,
+      "pos_mm": [
+        -114.3,
+        -151.5,
+        42.4
       ]
     },
     {
       "name": "Membrane_ForePanel_L",
-      "mass_g": 1.026,
+      "mass_g": 0.94,
       "pos_mm": [
-        -56.5,
-        -236.7,
-        59.2
+        -55.0,
+        -238.0,
+        59.4
       ]
     },
     {
       "name": "Membrane_HindPanel_L",
-      "mass_g": 0.598,
+      "mass_g": 0.748,
       "pos_mm": [
-        -182.2,
-        -128.5,
-        31.8
+        -186.5,
+        -133.4,
+        30.9
       ]
     },
     {
-      "name": "ESP32-C3 Super Mini",
-      "mass_g": 1.6,
+      "name": "Servo_R",
+      "mass_g": 13.2,
       "pos_mm": [
-        -38.8,
-        0.0,
-        -3.7
+        19.6,
+        6.2,
+        12.5
       ]
     },
     {
-      "name": "Buck 5V",
-      "mass_g": 1.5,
+      "name": "Servo_L",
+      "mass_g": 13.2,
       "pos_mm": [
-        -62.5,
+        19.6,
+        -6.2,
+        12.5
+      ]
+    },
+    {
+      "name": "LDO 3.3V + caps (NRF24 supply)",
+      "mass_g": 0.5,
+      "pos_mm": [
+        -107.1,
         0.0,
-        -3.2
+        -0.6
       ]
     },
     {

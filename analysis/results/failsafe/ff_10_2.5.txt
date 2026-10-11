@@ -1,0 +1,1 @@
+cg23_f2.5_a10_U4.0 completed steps 256 | last 0.4 s: pitch 12.4 deg, alpha 9.3 deg, V 4.53 m/s, climb 0.25 m/s, roll -0.0, yaw -0.0

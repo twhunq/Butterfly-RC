@@ -52,6 +52,12 @@ def main():
           % (tau, r1, r2, F, F / A))
     bearing = F / (HB["screw_d"] * HB["clamp_wall"])
     print("bearing on the %.1f mm clamp wall round each screw: %.1f MPa (allow ~%.0f)" % (HB["clamp_wall"], bearing, FATIGUE_ALLOW))
+    # servo case reaction: the same torque goes into the frame through the two ear screws of each servo
+    SV = PARAMS["servo"]
+    span = SV["L"] + 2 * SV["ear_overhang"] - 2 * SV["ear_hole_from_end"]
+    Fe = tau / span
+    print("servo ears: %d mm between the 2 M2 screws -> %.1f N each in shear, bearing %.1f MPa on the %.1f mm ear plate"
+          % (round(span), Fe, Fe / (2.0 * PR["ear_plate"]), PR["ear_plate"]))
 
 
 if __name__ == "__main__":

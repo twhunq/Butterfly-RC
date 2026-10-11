@@ -1,0 +1,30 @@
+{
+ "cg_mm": 22.4,
+ "neutral_point_mm": 41.4,
+ "static_margin_mm": 19.0,
+ "alpha_trim_glide": 10.2,
+ "glide_speed_m_s": 4.21,
+ "dMy_dalpha": -0.001125717189124416,
+ "static_alpha": [
+  2.0,
+  6.0,
+  10.0
+ ],
+ "static_lift_N": [
+  -0.0313,
+  0.195,
+  0.4426
+ ],
+ "static_My": [
+  0.00875,
+  0.00569,
+  -0.00026
+ ],
+ "flapping_at_trim": {
+  "f": 2.5,
+  "amp": 20.0,
+  "lift_over_W": 1.095,
+  "thrust_N": 0.0416,
+  "My": -0.00385
+ }
+}

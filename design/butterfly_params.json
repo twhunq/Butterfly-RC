@@ -3,23 +3,31 @@
   "_note": "Single source of truth. design/fusion_build.py builds the Fusion model from this file and writes design/fusion_mass_properties.json; the analysis scripts read both files.",
 
   "wing": {
-    "root": [0.0, 24.2, 17.9],
+    "root": [0.0, 24.2, 17.8],
     "dihedral_deg": 11.0,
     "hind_incidence_deg": -5.0,
     "_outline_note": "one membrane per side, flat-cut: R(0,0) -straight along LE rod-> le_rod.end -fore_curve-> notch -hind_curve-> root_edge_end -straight along root rod-> R. Fold line R->notch.",
+    "_shape_note": "v3.1 Monarch-like outline: forewing = costa along the LE rod, rounded apex, straight termen to the tornus (notch); hindwing = round fan with 6 scalloped lobes (V-notches between lobes), veins end 7 mm inside the lobe crests.",
     "outline": {
-      "fore_curve": [[15,370],[-30,385],[-90,360],[-140,300],[-163,225]],
-      "notch": [-158, 150],
-      "hind_curve": [[-185,192],[-225,230],[-265,215],[-285,160],[-275,90]],
-      "root_edge_end": [-245, 42]
+      "fore_curve": [[31,346],[20,370],[0,385],[-26,389],[-54,368],[-102,319],[-156,266],[-180,240]],
+      "notch": [-184, 212],
+      "hind_curve": [
+        [-203.5,226.7],[-227.5,229.4],[-233.3,232.7],[-239.6,233.1],[-246.6,231.6],[-252.3,229],[-257.3,225.3],[-261.1,219.5],
+        [-268.6,218.7],[-274.3,216.1],[-279.4,212.5],[-283.6,207.8],[-286.7,202.3],[-287.9,194.9],[-293.7,191.4],[-297.6,186.4],
+        [-300.3,180.8],[-302.3,174.1],[-302.8,167.8],[-301.2,161.1],[-305.7,155.9],[-308,150],[-309.2,143.1],[-309.1,136.9],
+        [-307.8,130.7],[-304,124.9],[-306.4,117.7],[-306.5,111.4],[-305.4,105.3],[-303.2,99.5],[-299.8,94.1],[-294.1,89.2],
+        [-294.4,82.3],[-292.4,76.3],[-289.3,70.9],[-284.7,65.6],[-279.6,61.8],[-273,60.3],[-262.7,48.6]
+      ],
+      "root_edge_end": [-250, 40]
     },
-    "le_rod": {"end": [35, 320], "od": 2.0, "id": 1.0},
+    "le_rod": {"end": [30, 318], "od": 2.0, "id": 1.0},
     "fold_rod": {"d": 1.0},
     "root_rod": {"d": 1.0},
     "veins": [
-      {"name": "A", "on": "LE",   "t": 100, "end": [-140, 272], "d": 1.0},
-      {"name": "B", "on": "LE",   "t": 220, "end": [-88, 350],  "d": 0.8},
-      {"name": "C", "on": "Fold", "t": 110, "end": [-265, 195], "d": 0.8}
+      {"name": "A", "on": "LE",   "t": 70,  "end": [-118, 295], "d": 1.0},
+      {"name": "B", "on": "LE",   "t": 170, "end": [-28, 375],  "d": 0.8},
+      {"name": "C", "on": "Fold", "t": 70,  "end": [-302, 143], "d": 0.8},
+      {"name": "D", "on": "Fold", "t": 170, "end": [-275, 207], "d": 0.8}
     ],
     "membrane_gsm": 20.0,
     "membrane_wrap_mm": 6.0
@@ -27,19 +35,29 @@
 
   "servo": {
     "model": "PTK 7465Plus",
-    "L": 23.7, "W": 12.0, "H": 26.6, "mass_g": 13.2,
+    "_dims_note": "measured on the vendor STEP (cad/PTK_7465.step, same case as 7465 MG: 23.7 x 12 x 26.6 mm in the PTK table). L, W = frame slot (case 23.8 x 11.7, labels +0.1 each side); H = output face (top of the gear tower) to the case bottom.",
+    "L": 23.8, "W": 12.0, "H": 26.8, "mass_g": 13.2,
     "orientation": "output_aft",
     "output_face_x": 5.25,
-    "shaft_y": 6.2, "shaft_z": 17.9, "shaft_len": 4.0,
+    "shaft_y": 6.2, "shaft_z": 17.8, "shaft_len": 4.0,
     "horn_thickness": 2.0, "horn_width": 5.5, "horn_len": 18.0, "horn_mass_g": 0.4,
-    "ear_from_output_face": 6.6, "ear_overhang": 4.5
+    "ear_from_output_face": 8.55, "ear_thickness": 2.0, "ear_overhang": 4.05,
+    "ear_hole_from_end": 2.45, "_ear_hole_note": "one slotted Ø2 hole per ear, on the width centre line",
+    "wire_exit": {"end": "shaft", "from_bottom": 5.7, "width": 3.1},
+    "cad": {"step": "cad/PTK_7465.step",
+            "_frame_note": "STEP frame: x along the case length, y up through the spline, z across the width",
+            "top_y": 34.59, "shaft_end_x": 10.58, "case_width": 11.7}
   },
 
   "body": {
-    "spine": {"x_front": 35.0, "length": 250.0, "section": 2.0, "z_centre": -7.7, "ear_clearance": 0.8},
-    "tray": {"centre_x": -60.0, "length": 75.0, "width": 20.0, "esp32": [22.5, 18.0], "buck": [17.0, 11.0]},
-    "battery": {"centre_x": -75.2, "size": [32.0, 20.0, 11.0], "mass_g": 11.0},
-    "esp32_mass_g": 1.6, "buck_mass_g": 1.5,
+    "_note": "abdomen = one round carbon tube; two printed clips slide on it: BattMount (battery under the tube, forward) and AvionicsMount (Arduino Nano V3 on top, NRF24L01 behind it). The tube ends under the NRF24 header so the PCB antenna overhangs clear of carbon. Slide the battery clip to trim the CG.",
+    "spine": {"x_front": 35.0, "od": 3.0, "id": 2.0, "bore_clearance": 0.075, "ear_clearance": 0.8},
+    "battery": {"centre_x": -39.1, "size": [32.0, 20.0, 11.0], "mass_g": 11.0, "foam_gap": 0.6},
+    "nano": {"model": "Arduino Nano V3 (ATmega328P), headers removed", "centre_x": -84.5, "board": [43.2, 18.6, 1.6],
+             "under_clearance": 2.6, "usb": "forward", "mass_g": 5.0},
+    "nrf24": {"model": "NRF24L01 PCB-antenna module, header removed", "board": [29.0, 15.2, 1.0], "gap_to_nano": 3.0,
+              "carbon_under_header": 10.0, "mass_g": 2.0},
+    "ldo_mass_g": 0.5,
     "wires": {"mass_g": 3.0, "x": -5.0}
   },
 
@@ -51,7 +69,7 @@
       "clamp_half_height": 4.5,
       "clamp_y_start_from_shaft": 4.8,
       "le_boss_od": 7.2, "le_boss_tip_od": 4.6,
-      "rod_boss_od": 4.6, "rod_boss_tip_od": 3.2,
+      "rod_boss_od": 5.2, "rod_boss_tip_od": 3.2,
       "le_boss_len": 20.0, "rod_boss_len": 16.0,
       "bore_start": 3.0,
       "core_sphere_extra": 0.8,
@@ -61,7 +79,9 @@
     "conn_wall": 1.2, "conn_sleeve_wall": 1.0,
     "conn_sleeve_len": 12.0,
     "frame_wall": 1.6,
-    "sleeve_half_width": 2.6
+    "ear_plate": 3.0, "screw_pilot_d": 1.6, "_screw_note": "servo ears screwed to the frame: 4 x M2x6 self-tapping",
+    "spine_sleeve_wall": 1.3,
+    "clip_wall": 1.2
   },
 
   "materials_g_cm3": {"PLA": 1.24, "PETG": 1.27, "carbon": 1.55},

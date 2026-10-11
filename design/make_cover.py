@@ -84,17 +84,17 @@ def main():
             a, b = T(top(W.fold(r["a"], hind), sgn)), T(top(W.fold(r["b"], hind), sgn))
             col = SIGNAL if r["name"] == "Fold" else INK
             ax.plot([a[0], b[0]], [a[1], b[1]], color=col, lw=0.25 + r["od"] * 0.38, solid_capstyle="round", zorder=4)
-    # body: servos, frame, spine, tray, battery
+    # body: servos, frame, spine, Nano + NRF24 on the avionics clip, battery
     sv = P["servo"]
     of, H, Wd = sv["output_face_x"], sv["H"], sv["W"]
     for sgn in (1, -1):
         y0, y1 = sorted((sgn * 0.2, sgn * (0.2 + Wd)))
         ax.add_patch(Rectangle(T((y0, of)), (y1 - y0) * sc, H * sc, fc=INK, ec="none", zorder=5))
-    sp = P["body"]["spine"]
-    ax.plot([ox, ox], [T((0, sp["x_front"]))[1], T((0, sp["x_front"] - sp["length"]))[1]], color=INK, lw=0.9, zorder=5)
-    tr = P["body"]["tray"]
-    ax.add_patch(Rectangle(T((-tr["width"] / 2, tr["centre_x"] - tr["length"] / 2)), tr["width"] * sc, tr["length"] * sc,
-                           fill=False, ec=INK, lw=0.5, zorder=5))
+    LY = wg.body_layout(P)
+    xr, xf = LY["spine_x"]
+    ax.plot([ox, ox], [T((0, xf))[1], T((0, xr))[1]], color=INK, lw=0.9, zorder=5)
+    for (x0, x1), wb in ((LY["nano_x"], P["body"]["nano"]["board"][1]), (LY["nrf_x"], P["body"]["nrf24"]["board"][1])):
+        ax.add_patch(Rectangle(T((-wb / 2, x0)), wb * sc, (x1 - x0) * sc, fill=False, ec=INK, lw=0.5, zorder=5))
     bt = P["body"]["battery"]
     ax.add_patch(Rectangle(T((-bt["size"][1] / 2, bt["centre_x"] - bt["size"][0] / 2)), bt["size"][1] * sc, bt["size"][0] * sc,
                            fill=False, ec=INK2, lw=0.4, ls=(0, (2, 1.5)), zorder=5))
@@ -142,7 +142,7 @@ def main():
     # ---------------------------------------------------------------- data column + title
     cx0 = 300
     ax.text(cx0, 252, "BƯỚM", fontsize=30, family=TITLE, color=INK)
-    ax.text(cx0, 241, "RC · 2 SERVO · v3", fontsize=10, family=TITLE, color=INK)
+    ax.text(cx0, 241, "RC · 2 SERVO · v3.1", fontsize=10, family=TITLE, color=INK)
     ax.plot([cx0, cx0 + 92], [236, 236], color=INK, lw=0.4)
     fa, ha = W.areas()
     rows = [
@@ -155,7 +155,7 @@ def main():
         ("góc gấp tấm sau", "%.2f°  →  cúi %.0f°" % (math.degrees(W.beta), abs(P["wing"]["hind_incidence_deg"]))),
         ("vỗ cánh", "%.1f Hz · ±%d°" % (P["flight"]["f_hz"], P["flight"]["amp_deg"])),
         ("servo", P["servo"]["model"]),
-        ("điều khiển", "ESP32-C3 Super Mini"),
+        ("điều khiển", "Arduino Nano · NRF24L01"),
     ]
     y = 226
     for k, v in rows:

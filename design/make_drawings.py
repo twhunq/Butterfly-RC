@@ -39,6 +39,7 @@ P = W.prm
 WRAP = P["wing"]["membrane_wrap_mm"]
 SOCKET_BORE_START = 3.0      # mm from R, horn adapter (see fusion_build.py)
 CONN_BORE_START = 1.0        # mm beyond the host-rod surface, printed vein connectors
+XMIN = 10 * math.floor((min(p[0] for p in W.outline()) - 12) / 10)   # left edge of the drawing window (hind lobe)
 
 
 def cut_list():
@@ -120,7 +121,7 @@ def draw_wing(ax, mirror, title):
     for p, lab in ((W.LE_END, "đầu que cạnh trước"), (W.N, "N — đỉnh chỗ khuyết"), (W.E, "E — cuối que gốc")):
         ax.plot(*T(p), "k+", ms=7)
         ax.text(T(p)[0] + 3, T(p)[1] + 3, lab, fontsize=6)
-    ax.text(-290, 16 if s < 0 else -12, title, fontsize=11, family="Jura", color=INK, va="bottom" if s < 0 else "top")
+    ax.text(XMIN + 10, 16 if s < 0 else -12, title, fontsize=11, family="Jura", color=INK, va="bottom" if s < 0 else "top")
 
 
 def scale_bar(ax, x, y):
@@ -166,11 +167,11 @@ def title_block(fig, size_mm, sheet, of):
     for yy in (9, 17):
         tb.plot([0, w], [yy, yy], color=INK, lw=0.4)
     tb.plot([78, 78], [0, 17], color=INK, lw=0.4)
-    tb.text(3, 21.5, "BƯỚM RC · 2 SERVO · v3 — MẪU CẮT CÁNH", fontsize=8, family="Jura", color=INK, va="center")
+    tb.text(3, 21.5, "BƯỚM RC · 2 SERVO · v3.1 — MẪU CẮT CÁNH", fontsize=8, family="Jura", color=INK, va="center")
     tb.text(3, 13, "tỉ lệ 1 : 1 · in 100 % / Actual size", fontsize=6.5, color=INK, va="center")
     tb.text(3, 4.5, "nguồn: butterfly_params.json · wing_geometry.py", fontsize=5.5, family="IBM Plex Mono", color=INK2, va="center")
     tb.text(81, 13, "tờ %d / %d" % (sheet, of), fontsize=6.5, family="IBM Plex Mono", color=INK, va="center")
-    tb.text(81, 4.5, "2026-10-05 · mm", fontsize=6, family="IBM Plex Mono", color=INK2, va="center")
+    tb.text(81, 4.5, "2026-10-08 · mm", fontsize=6, family="IBM Plex Mono", color=INK2, va="center")
 
 
 def page(fig_size_mm, window, mirror, title, with_notes=True):
@@ -184,18 +185,18 @@ def page(fig_size_mm, window, mirror, title, with_notes=True):
     ax.axis("off")
     draw_wing(ax, mirror, title)
     if with_notes:
-        scale_bar(ax, -290, -480 if not mirror else -150)
-        notes(ax, -290, -398 if not mirror else -28)
+        scale_bar(ax, XMIN + 10, -480 if not mirror else -150)
+        notes(ax, XMIN + 10, -398 if not mirror else -28)
     return fig, ax
 
 
 def main():
     sides = [(False, "CÁNH PHẢI — nhìn từ trên, mép trước bên phải, tỉ lệ 1:1"),
              (True, "CÁNH TRÁI — nhìn từ trên, mép trước bên phải, tỉ lệ 1:1")]
-    # A2 full size: drawing window chosen so the wing (x -290..45, |y| 0..390) and the notes fit
+    # A2 full size: drawing window starts left of the hind lobe so the wing (|y| 0..390) and the notes fit
     with PdfPages(OUT / "wing_template_A2.pdf") as pdf:
         for mirror, title in sides:
-            window = (-300, -500) if not mirror else (-300, -180)
+            window = (XMIN, -500) if not mirror else (XMIN, -180)
             fig, _ = page(A2, window, mirror, title)
             title_block(fig, A2, 1 if not mirror else 2, 2)
             pdf.savefig(fig)
@@ -203,7 +204,7 @@ def main():
     # A4 tiles with 10 mm overlap
     with PdfPages(OUT / "wing_template_A4_tiles.pdf") as pdf:
         for mirror, title in sides:
-            xmin, xmax = -300, 50
+            xmin, xmax = XMIN, 50
             ymin, ymax = (-400, 20) if not mirror else (-20, 400)
             vw, vh = A4[0] - 20, A4[1] - 20
             step_x, step_y = vw - 10, vh - 10
@@ -238,7 +239,7 @@ def main():
     md += ["", "- Chiều dài cắt = dài thiết kế trừ phần nằm trong lỗ khớp (hub gốc cánh: lỗ bắt đầu cách R %.0f mm; khớp gân: cách mặt que gốc %.0f mm)." % (SOCKET_BORE_START, CONN_BORE_START),
            "- Màng mỗi bên: %.0f cm² (tấm trước %.0f, tấm sau %.0f) + mép bọc %d mm quanh que cạnh trước và que gốc." % ((fa + ha) / 100, fa / 100, ha / 100, WRAP),
            "- Gấp: phần sau gập xuống %.2f° quanh que gấp R–N → cánh sau cúi %.1f°, rủ thêm %.1f°." % (math.degrees(W.beta), abs(P["wing"]["hind_incidence_deg"]), math.degrees(W.hind_extra_anhedral)),
-           "- Xương sống: ống carbon vuông %.0f mm, dài %.0f mm (1 cây)." % (P["body"]["spine"]["section"], P["body"]["spine"]["length"])]
+           "- Xương sống: ống carbon tròn %g × %g mm, dài %.0f mm (1 cây)." % (P["body"]["spine"]["od"], P["body"]["spine"]["id"], wg.body_layout(P)["spine_length"])]
     (OUT / "rod_cut_list.md").write_text("\n".join(md), encoding="utf-8")
     print("\n".join(md))
 

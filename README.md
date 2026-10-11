@@ -1,6 +1,6 @@
 # Butterfly RC — bướm điều khiển từ xa 2 servo
 
-ESP32‑C3 Super Mini, 2 servo PTK 7465Plus, cánh một tấm màng gấp, sải cánh 805mm, khối lượng 60g.
+Arduino Nano V3 + NRF24L01, 2 servo PTK 7465Plus, thân ống carbon tròn 3×2mm, cánh một tấm màng gấp dáng bướm Monarch (v3.1), sải cánh 814mm, khối lượng 70g.
 
 ## Bắt đầu từ đâu
 
@@ -11,6 +11,7 @@ ESP32‑C3 Super Mini, 2 servo PTK 7465Plus, cánh một tấm màng gấp, sả
 | In mẫu cắt cánh 1:1 | `design/drawings/wing_template_A2.pdf` (khổ A2) hoặc `wing_template_A4_tiles.pdf` (ghép A4) |
 | Cắt que carbon | `design/drawings/rod_cut_list.md` |
 | In 3D | `design/stl/*.stl` |
+| Nạp firmware, điều khiển bằng điện thoại | `firmware/README.md` |
 | Xem chuyển động | `simulation/*.gif` (bản cũ trong `v1_old/`, `v2_two_panels/`) |
 | Phân tích khí động, kết cấu, ổn định, bay tự do | `analysis/BAO_CAO_khi_dong_ket_cau.md`, `analysis/results/` |
 

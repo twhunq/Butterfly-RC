@@ -59,6 +59,8 @@ class Wing:
         self.incidence = math.radians(w["hind_incidence_deg"])          # negative = nose down
         self.beta = abs(self.incidence) / abs(self.u[1])                # fold angle about the fold line
         self.hind_extra_anhedral = self.beta * abs(self.u[0])           # roll component of the fold
+        # rods lying in the hind panel: the root rod and every vein that branches off the fold rod
+        self.HIND_RODS = ("Root",) + tuple("Vein" + v["name"] for v in w["veins"] if v["on"] == "Fold")
 
     # -------------------------------------------------------------- 2D (flat template)
     def outline(self, n=12):
@@ -80,8 +82,6 @@ class Wing:
         return self.u[0] * p[1] - self.u[1] * p[0] > 1e-9
 
     # -------------------------------------------------------------- folding
-    HIND_RODS = ("Root", "VeinC")
-
     def fold(self, p, hind=None):
         """Flat point (x, y) -> wing-local 3D (x, y, z). Points of the hind panel rotate rigidly about the
         fold line. Pass hind=True/False when the panel is known (part of the hind lobe lies beyond the
@@ -125,6 +125,30 @@ class Wing:
                 s += x0 * y1 - x1 * y0
             return abs(s) / 2
         return area(self.fore_panel()), area(self.hind_panel())
+
+
+def body_layout(prm=None):
+    """Abdomen layout (model frame, mm) shared by the Fusion build and the drawings.
+
+    The round carbon spine runs from x_front aft; its centre sits under the servo mounting ears. The
+    AvionicsMount clip carries the Nano (USB forward) and, behind it, the NRF24 module; the spine stops
+    carbon_under_header mm under the NRF24 so the PCB antenna overhangs clear of carbon."""
+    prm = prm or load_params()
+    bd, sv, pr = prm["body"], prm["servo"], prm["printed"]
+    sp, nano, nrf = bd["spine"], bd["nano"], bd["nrf24"]
+    rb = sp["od"] / 2 + sp["bore_clearance"]                        # bore radius in every printed sleeve
+    r_frame = rb + pr["spine_sleeve_wall"]                          # servo-frame sleeve
+    r_clip = rb + pr["clip_wall"]                                   # light clips
+    ear_bottom = 0.2 - sv["ear_overhang"]                           # servo case sits 0.2 mm above z=0
+    zc = ear_bottom - sp["ear_clearance"] - r_frame
+    nx0, nx1 = nano["centre_x"] - nano["board"][0] / 2, nano["centre_x"] + nano["board"][0] / 2
+    z_board = zc + r_clip + nano["under_clearance"]                 # underside of both boards
+    rx1 = nx0 - nrf["gap_to_nano"]                                  # NRF24 header end (forward)
+    rx0 = rx1 - nrf["board"][0]                                     # antenna end (aft)
+    x_rear = rx1 - nrf["carbon_under_header"]
+    return dict(rb=rb, r_frame=r_frame, r_clip=r_clip, zc=zc, ear_bottom=ear_bottom, z_board=z_board,
+                nano_x=(nx0, nx1), nrf_x=(rx0, rx1), spine_x=(x_rear, sp["x_front"]),
+                spine_length=sp["x_front"] - x_rear)
 
 
 def to_model(wing, p_local3, sgn, root):

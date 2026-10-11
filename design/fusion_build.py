@@ -90,6 +90,8 @@ def build():
         for nm, b in bodies:
             comp.bRepBodies.add(b, bf).name = nm
         bf.finishEdit()
+        for (nm, _), b in zip(bodies, comp.bRepBodies):   # STEP-derived bodies get their old names back on finishEdit
+            b.name = nm
 
     def appearance(name, rgb=None, base="Plastic - Matte (White)"):
         ap = des.appearances.itemByName(name)
@@ -107,8 +109,6 @@ def build():
                         pass
         return ap
 
-    AP = {"orange": appearance("Butterfly Orange", (245, 130, 30)), "black": appearance("Plastic - Matte (Black)"),
-          "carbon": appearance("Carbon Fiber - Plain"), "white": appearance("Plastic - Matte (White)")}
 
     # ------------------------------------------------------------------ parameters
     ROOT = tuple(WG["root"])
@@ -135,73 +135,125 @@ def build():
         wire = res[0] if isinstance(res, (list, tuple)) else res
         return tbm.createFaceFromPlanarWires([wire])
 
-    # ------------------------------------------------------------------ servos (output shaft points aft)
-    c = new_comp("REF_Servo_%s_x2" % SV["model"].replace(" ", ""))
-    bl = []
-    for sgn, nm in ((1, "R"), (-1, "L")):
-        y0, y1 = sorted((sgn * CL, sgn * (CL + Wd)))
-        b = box(OF, OF + H, y0, y1, CL, CL + L)
-        ex = OF + SV["ear_from_output_face"]
-        add(b, box(ex, ex + 2, y0, y1, CL - SV["ear_overhang"], CL + L + SV["ear_overhang"]))
-        add(b, cyl((OF, sgn * SHY, SHZ), (OF - SV["shaft_len"], sgn * SHY, SHZ), 2.5))
-        bl.append(("Servo_" + nm, b))
-    put(c, bl)
+    # ------------------------------------------------------------------ servos: vendor STEP model, output shaft points aft
+    # Both servos are the same part: the shaft sits mid-width, so the left one is the right one moved across
+    # (no mirror). STEP frame: x along the case length, y up through the spline, z across the width.
+    CAD = SV["cad"]
 
-    # ------------------------------------------------------------------ frame: servo band + spine clamp
+    def V(x, y, z):
+        return adsk.core.Vector3D.create(x, z, -y) if yup else adsk.core.Vector3D.create(x, y, z)
+    n0 = root.occurrences.count
+    app.importManager.importToTarget(app.importManager.createSTEPImportOptions(os.path.join(HERE, CAD["step"])), root)
+    step_occ = root.occurrences.item(n0)
+    servo_occ = {}
+    for sgn, nm in ((1, "R"), (-1, "L")):
+        y0 = CL + (Wd - CAD["case_width"]) / 2 if sgn > 0 else -(CL + (Wd + CAD["case_width"]) / 2)
+        m = adsk.core.Matrix3D.create()
+        m.setWithCoordinateSystem(P(OF + CAD["top_y"], y0, CL + L + CAD["shaft_end_x"]),
+                                  V(0, 0, -1), V(-1, 0, 0), V(0, 1, 0))
+        bl = []
+        for k, sb in enumerate(step_occ.component.bRepBodies):
+            b = tbm.copy(sb)
+            tbm.transform(b, m)
+            bl.append(("Servo_%s_%d" % (nm, k + 1), b))
+        cname = "REF_Servo_%s_%s" % (nm, SV["model"].replace(" ", ""))
+        put(new_comp(cname), bl)
+        servo_occ[nm] = root.occurrences.itemByName(cname + ":1")
+    step_occ.deleteMe()
+
+    # ------------------------------------------------------------------ frame: servo band + round spine sleeve
     PR = prm["printed"]
-    SW = PR["sleeve_half_width"]                       # spine sleeves: wall ~1.5 mm round the 2 mm tube
+    LY = wg.body_layout(prm)
+    zc, RB, SW, RC = LY["zc"], LY["rb"], LY["r_frame"], LY["r_clip"]      # spine centre runs just under the servo ears
     c = new_comp("PRINT_Frame_ServoMount")
     IY, IZ0, IZ1, Wl = Wd + CL, 0.0, L + 2 * CL, PR["frame_wall"]
-    bx0, bx1 = OF + H - 12, OF + H - 2
+    EX = OF + SV["ear_from_output_face"] + SV["ear_thickness"]        # ear seat: the ears' servo-bottom face
+    EP = PR["ear_plate"]
+    ez0, ez1 = CL - SV["ear_overhang"], CL + L + SV["ear_overhang"]
+    bx0, bx1 = EX, OF + H - 2                                          # band runs from the ear plate to the servo bottom
     f = box(bx0, bx1, -(IY + Wl), IY + Wl, IZ0 - Wl, IZ1 + Wl)
-    sub(f, box(bx0 - 1, bx1 + 1, -IY, IY, IZ0, IZ1))
-    xm = (bx0 + bx1) / 2
-    sub(f, cyl((xm, -20, 12), (xm, 20, 12), 2.5))
-    sub(f, cyl((xm, 0, 10), (xm, 0, 40), 2.5))           # top window only; the bottom stays solid over the sleeve
-    sp = BD["spine"]
-    hs = sp["section"] / 2 + 0.075
-    # the servo mounting ears overhang the servo bottom: run the spine and its sleeve below them
-    ear_bottom = CL - SV["ear_overhang"]
-    zc = min(sp["z_centre"], ear_bottom - sp.get("ear_clearance", 0.8) - SW)
+    add(f, box(EX, EX + EP, -(IY + Wl), IY + Wl, ez0 - 1.0, ez1))    # ear plate: the ears seat on it and are screwed down
+    sub(f, box(bx0 - 1, bx1 + 1, -IY, IY, IZ0, IZ1))                  # window / slot for both cases
+    xm = (EX + EP + bx1) / 2
+    sub(f, box(EX + EP + 1.5, bx1 - 3.0, -20, 20, IZ0 + 3.0, IZ1 - 3.0))   # side windows (rear 3 mm stays a closed ring)
+    sub(f, box(EX + EP + 1.5, bx1 - 3.0, -2.8, 2.8, 10, 40))         # top window only; the bottom stays solid over the sleeve
     add(f, box(bx0, bx1, -SW, SW, zc, IZ0 - Wl + 0.2))                 # web: only under the band, clear of the ears
-    add(f, box(OF + 2, OF + H + 1.5, -SW, SW, zc - SW, zc + SW))         # sleeve below the ears
-    sub(f, box(OF + 1, OF + H + 2.5, -hs, hs, zc - hs, zc + hs))
+    add(f, cyl((OF + 2, 0, zc), (OF + H + 1.5, 0, zc), SW))             # sleeve below the ears
+    sub(f, cyl((OF + 1, 0, zc), (OF + H + 2.5, 0, zc), RB))
+    for sgn in (1, -1):
+        for zh in (ez0 + SV["ear_hole_from_end"], ez1 - SV["ear_hole_from_end"]):   # pilot holes under the ear slots
+            sub(f, cyl((EX - 1, sgn * SHY, zh), (EX + EP + 1, sgn * SHY, zh), PR["screw_pilot_d"] / 2))
+        we = SV["wire_exit"]                             # the lead leaves the shaft-end face next to the servo bottom
+        y0, y1 = sorted((sgn * (SHY - we["width"] / 2 - 0.6), sgn * (SHY + we["width"] / 2 + 0.6)))
+        sub(f, box(OF + H - we["from_bottom"] - 0.6, bx1 + 1, y0, y1, IZ1 - 0.1, IZ1 + Wl + 0.1))
     put(c, [("Frame_ServoMount", f)])
 
-    # ------------------------------------------------------------------ spine
-    c = new_comp("REF_Spine_2mm_tube")
-    xf, s2 = sp["x_front"], sp["section"] / 2
-    put(c, [("Spine_%dmm_tube_%d" % (sp["section"], sp["length"]), box(xf - sp["length"], xf, -s2, s2, zc - s2, zc + s2))])
+    # ------------------------------------------------------------------ spine: round carbon tube
+    sp = BD["spine"]
+    xr, xf = LY["spine_x"]
+    c = new_comp("REF_Spine_carbon_tube")
+    t = cyl((xr, 0, zc), (xf, 0, zc), sp["od"] / 2)
+    sub(t, cyl((xr - 1, 0, zc), (xf + 1, 0, zc), sp["id"] / 2))
+    put(c, [("Spine_%gx%gmm_tube_%.0f" % (sp["od"], sp["id"], LY["spine_length"]), t)])
 
-    # ------------------------------------------------------------------ tray (abdomen): ESP32 + buck on top, battery below
-    tr, bt = BD["tray"], BD["battery"]
-    tc, tl, tw = tr["centre_x"], tr["length"], tr["width"] / 2
-    c = new_comp("PRINT_Tray_Abdomen")
-    TW = 2.2                                           # tray sleeve: light duty, keep it slim
-    zt0 = zc + TW                                      # tray plate sits right on its sleeve
-    zt1 = zt0 + 0.8
-    t = box(tc - tl / 2, tc + tl / 2, -TW, TW, zc - TW, zt0 + 0.01)
-    add(t, box(tc - tl / 2, tc + tl / 2, -tw, tw, zt0, zt1))
-    esp_x1 = tc + tl / 2 - 5
-    esp_x0 = esp_x1 - tr["esp32"][0]
-    buck_x1 = esp_x0 - 4
-    buck_x0 = buck_x1 - tr["buck"][0]
-
-    def posts(x0, x1, hy):
-        for xx in (x0 - 1.2, x1):
-            for yy in (hy, -hy - 1.2):
-                add(t, box(xx, xx + 1.2, yy, yy + 1.2, zt1, zt1 + 1.7))
-    posts(esp_x0, esp_x1, tr["esp32"][1] / 2 + 0.1)
-    posts(buck_x0, buck_x1, tr["buck"][1] / 2 + 0.1)
+    # ------------------------------------------------------------------ battery clip: sleeve + plate, battery hangs under it
+    bt = BD["battery"]
     bx = bt["centre_x"]
-    for xx in (bx - bt["size"][0] / 2 - 3.5, bx + bt["size"][0] / 2 + 0.5):      # zip-tie slots at the battery ends
-        sub(t, box(xx, xx + 3, 3.5, 8.5, zt0 - 2, zt1 + 1))
-        sub(t, box(xx, xx + 3, -8.5, -3.5, zt0 - 2, zt1 + 1))
-    sub(t, box(tc - tl / 2 - 1, tc + tl / 2 + 1, -hs, hs, zc - hs, zc + hs))
-    put(c, [("Tray_Abdomen", t)])
-    c = new_comp("REF_Battery_2S_180mAh")
     bL, bW, bH = bt["size"]
-    put(c, [("Battery", box(bx - bL / 2, bx + bL / 2, -bW / 2, bW / 2, zc - TW - 0.6 - bH, zc - TW - 0.6))])
+    c = new_comp("PRINT_BattMount")
+    zp1 = zc - RC + 0.6                                # plate top dips into the sleeve bottom
+    zp0 = zc - RC - 1.0
+    k = cyl((bx - 8, 0, zc), (bx + 8, 0, zc), RC)
+    add(k, box(bx - bL / 2 + 3, bx + bL / 2 - 3, -bW / 2 + 1, bW / 2 - 1, zp0, zp1))
+    for xx in (bx - 11.5, bx + 11.5):                  # zip-tie notches: each tie wraps battery + plate + bare tube
+        for sy in (1, -1):
+            y0, y1 = sorted((sy * (bW / 2 - 2), sy * (bW / 2)))
+            sub(k, box(xx - 1.5, xx + 1.5, y0, y1, zp0 - 1, zp1 + 1))
+    sub(k, cyl((bx - 9, 0, zc), (bx + 9, 0, zc), RB))
+    put(c, [("PRINT_BattMount", k)])
+    c = new_comp("REF_Battery_2S_180mAh")
+    zbt = zp0 - bt["foam_gap"]
+    put(c, [("Battery", box(bx - bL / 2, bx + bL / 2, -bW / 2, bW / 2, zbt - bH, zbt))])
+
+    # ------------------------------------------------------------------ avionics clip: Arduino Nano on top, NRF24 behind it
+    na, nr = BD["nano"], BD["nrf24"]
+    nx0, nx1 = LY["nano_x"]
+    rx0, rx1 = LY["nrf_x"]
+    zb = LY["z_board"]                                 # underside of both boards
+    zt = zb + na["board"][2]
+    hw = na["board"][1] / 2 + 0.15                     # board slot half width
+    hr = nr["board"][1] / 2 + 0.15
+    tr_ = nr["board"][2]
+    PW = 1.2                                           # post / rail wall
+    c = new_comp("PRINT_AvionicsMount")
+    a = cyl((nx1 - 6, 0, zc), (nx1, 0, zc), RC)                                         # front saddle
+    add(a, box(nx1 - 2.5, nx1, -(hw + PW), hw + PW, zc, zb))
+    add(a, cyl((xr - 1.5, 0, zc), (nx0 + 6, 0, zc), RC))                                # rear sleeve, capped over the tube end
+    add(a, box(nx0, nx0 + 2.5, -(hw + PW), hw + PW, zc, zb))                            # rear crossbar
+    for sy in (1, -1):
+        y0, y1 = sorted((sy * hw, sy * (hw + PW)))
+        add(a, box(nx0, nx1, y0, y1, zb - 1.8, zb))                                     # side rails
+        y0, y1 = sorted((sy * (hw - 0.75), sy * (hw + PW)))
+        add(a, box(nx1 - 2.5, nx1 + 1.0, y0, y1, zb - 0.5, zt + 0.95))                  # front corners: lip + end stop
+        add(a, box(nx0 - 1.0, nx0 + 2.5, y0, y1, zb - 0.5, zt + 0.15))                  # rear corners: guide + end stop
+        y0, y1 = sorted((sy * (hr - 0.6), sy * (hr + PW)))
+        add(a, box(rx0 - 1.0, rx0 + 2.5, y0, y1, zb - 0.5, zb + tr_ + 0.95))            # NRF antenna-end lips
+        y0, y1 = sorted((sy * hr, sy * (hr + PW)))
+        add(a, box(rx1 - 3.0, rx1, y0, y1, zb - 0.5, zb + tr_ + 0.15))                  # NRF header-end guides
+    add(a, box(rx0 - 1.0, nx0 + 2.5, -(hr + PW), hr + PW, zb - 1.2, zb))               # NRF tongue (plastic under the antenna)
+    add(a, box(xr - 1.5, nx0 + 2.5, -1.5, 1.5, zc, zb - 1.19))                         # web: tongue to rear sleeve
+    sub(a, box(rx0 + 2.5, xr - 2.0, -(hr - 1.5), hr - 1.5, zb - 2, zb + 1))            # window in the tongue behind the tube
+    sub(a, box(nx0 - 0.15, nx1 + 0.15, -hw, hw, zb, zt + 0.15))                        # Nano keep-out
+    sub(a, box(rx0 - 0.15, rx1 + 0.15, -hr, hr, zb, zb + tr_ + 0.15))                  # NRF keep-out
+    sub(a, cyl((xr - 0.5, 0, zc), (nx1 + 1, 0, zc), RB))                               # tube bore, blind at the tail
+    put(c, [("PRINT_AvionicsMount", a)])
+    c = new_comp("REF_Electronics")
+    nb = box(nx0, nx1, -na["board"][1] / 2, na["board"][1] / 2, zb, zt)
+    add(nb, box(nx1 - 9, nx1 + 1.5, -3.9, 3.9, zt, zt + 4.0))                          # mini-USB socket, facing forward
+    add(nb, box(nx0 + 14, nx0 + 26, -3.5, 3.5, zt, zt + 1.6))                          # ATmega328P
+    rbd = box(rx0, rx1, -nr["board"][1] / 2, nr["board"][1] / 2, zb, zb + tr_)
+    add(rbd, box(rx1 - 14, rx1 - 9, -2.5, 2.5, zb + tr_, zb + tr_ + 0.9))              # nRF24L01+ chip
+    put(c, [("Nano_board", nb), ("NRF24_board", rbd)])
 
     # ------------------------------------------------------------------ wings: one folded membrane + rods per side
     rods = wing.rods()
@@ -294,16 +346,18 @@ def build():
     root.occurrences.itemByName("WING_Pattern_1to1:1").isLightBulbOn = False
 
     # ------------------------------------------------------------------ joints
-    servo = [o for o in root.occurrences if o.component.name.startswith("REF_Servo")][0]
-    servo.isGrounded = True
-    body_occ = [o for o in root.occurrences if o.component.name.startswith(("REF_Servo", "PRINT_Frame", "PRINT_Tray", "REF_Spine", "REF_Battery"))]
+    BODY_COMPS = ("REF_Servo", "PRINT_Frame", "REF_Spine", "PRINT_BattMount", "REF_Battery", "PRINT_AvionicsMount",
+                  "REF_Electronics")
+    for o in servo_occ.values():
+        o.isGrounded = True
+    body_occ = [o for o in root.occurrences if o.component.name.startswith(BODY_COMPS)]
     root.rigidGroups.add(adsk.core.ObjectCollection.createWithArray(body_occ), False).name = "Body_Rigid"
     for side in ("R", "L"):
         occ = root.occurrences.itemByName("WING_%s_Assembly:1" % side)
         hb = [b for b in occ.bRepBodies if b.name.startswith("REF_ServoHorn")][0]
         fc = next(f_ for f_ in hb.faces if adsk.core.Cylinder.cast(f_.geometry)
                   and abs(adsk.core.Cylinder.cast(f_.geometry).radius - 0.35) < 1e-4)
-        ji = root.asBuiltJoints.createInput(occ, servo, adsk.fusion.JointGeometry.createByNonPlanarFace(
+        ji = root.asBuiltJoints.createInput(occ, servo_occ[side], adsk.fusion.JointGeometry.createByNonPlanarFace(
             fc, adsk.fusion.JointKeyPointTypes.StartKeyPoint))
         ji.setAsRevoluteJointMotion(adsk.fusion.JointDirections.ZAxisJointDirection)
         j = root.asBuiltJoints.add(ji)
@@ -315,10 +369,14 @@ def build():
         lim.maximumValue = math.radians(45)
 
     # ------------------------------------------------------------------ paint (bodies looked up again by name) + hide joint glyphs
+    # created here, not at the top: the STEP import purges appearances that no body uses yet
+    AP = {"orange": appearance("Butterfly Orange", (245, 130, 30)), "black": appearance("Plastic - Matte (Black)"),
+          "carbon": appearance("Carbon Fiber - Plain"), "white": appearance("Plastic - Matte (White)"),
+          "pcb": appearance("PCB Green", (20, 110, 60))}
     for occ in root.occurrences:
         for b in occ.component.bRepBodies:
             n = b.name
-            if n.startswith(("PRINT_", "Frame_", "Tray_")):
+            if n.startswith(("PRINT_", "Frame_")):
                 b.appearance = AP["orange"]
             elif n.startswith("Membrane_"):
                 b.appearance = AP["orange"]
@@ -329,6 +387,8 @@ def build():
                 b.appearance = AP["black"]
             elif n.startswith(("REF_ServoHorn", "Battery")):
                 b.appearance = AP["white"]
+            elif n.endswith("_board"):
+                b.appearance = AP["pcb"]
     try:
         root.isJointsFolderLightBulbOn = False
     except Exception:
@@ -336,14 +396,14 @@ def build():
 
     # ------------------------------------------------------------------ static interference (body parts with each other)
     statics = [(o.component.name + "/" + b.name, b) for o in root.occurrences
-               if o.component.name.startswith(("REF_Servo", "PRINT_Frame", "PRINT_Tray", "REF_Spine", "REF_Battery", "WING_"))
+               if o.component.name.startswith(BODY_COMPS + ("WING_",))
                for b in o.bRepBodies if b.isSolid and not b.name.startswith(("REF_ServoHorn",))]
     clashes = []
     for i in range(len(statics)):
         for k in range(i + 1, len(statics)):
             (n1, b1), (n2, b2) = statics[i], statics[k]
-            if n1.split("/")[0] == n2.split("/")[0] and n1.startswith("WING_"):
-                continue                                  # parts of one wing touch by design (rods in sockets)
+            if n1.split("/")[0] == n2.split("/")[0]:
+                continue                                  # parts of one component touch by design (rods in sockets, servo case halves)
             a_ = tbm.copy(b1)
             tbm.booleanOperation(a_, tbm.copy(b2), adsk.fusion.BooleanTypes.IntersectionBooleanType)
             if a_.volume > 1e-6:
@@ -351,7 +411,7 @@ def build():
 
     # ------------------------------------------------------------------ mass properties -> json
     dens_pla, dens_cf = prm["materials_g_cm3"]["PLA"], prm["materials_g_cm3"]["carbon"]
-    dens = {"PRINT": prm["materials_g_cm3"]["PETG"], "Frame": dens_pla, "Tray": dens_pla,
+    dens = {"PRINT": prm["materials_g_cm3"]["PETG"], "Frame": dens_pla,
             "LE": dens_cf, "Fold": dens_cf, "Root": dens_cf, "Vein": dens_cf, "Spine": dens_cf}
 
     def poly_centroid(poly):
@@ -376,9 +436,13 @@ def build():
             pos = to_model(pp.centerOfMass)
             sgn = 1 if nm.endswith("_R") else -1
             if nm.startswith("Servo_"):
-                m = SV["mass_g"]
+                continue                                  # added once per servo below
             elif nm.startswith("Battery"):
                 m = BD["battery"]["mass_g"]
+            elif nm == "Nano_board":
+                m, pos = BD["nano"]["mass_g"], ((nx0 + nx1) / 2, 0.0, zt + 1.0)
+            elif nm == "NRF24_board":
+                m, pos = BD["nrf24"]["mass_g"], ((rx0 + rx1) / 2, 0.0, zb + 1.0)
             elif nm.startswith("REF_ServoHorn"):
                 m = SV["horn_mass_g"]
             elif nm.startswith("Membrane_ForePanel"):
@@ -391,8 +455,11 @@ def build():
                     continue
                 m = pp.volume * dens[key]
             items.append((nm, m, pos))
-    items.append(("ESP32-C3 Super Mini", BD["esp32_mass_g"], ((esp_x0 + esp_x1) / 2, 0.0, zt1 + 1.0)))
-    items.append(("Buck 5V", BD["buck_mass_g"], ((buck_x0 + buck_x1) / 2, 0.0, zt1 + 1.5)))
+    for nm, o in servo_occ.items():                    # servo mass at the volume centroid of its STEP bodies
+        vs = [(b.physicalProperties.volume, to_model(b.physicalProperties.centerOfMass)) for b in o.bRepBodies]
+        vt = sum(v for v, _ in vs)
+        items.append(("Servo_" + nm, SV["mass_g"], tuple(sum(v * c[i] for v, c in vs) / vt for i in range(3))))
+    items.append(("LDO 3.3V + caps (NRF24 supply)", BD["ldo_mass_g"], (rx1 + 2, 0.0, zb + 1.5)))
     items.append(("Wires/glue", BD["wires"]["mass_g"], (BD["wires"]["x"], 0.0, 8.0)))
     Mt = sum(m for _, m, _ in items)
     cg = [sum(m * p[i] for _, m, p in items) / Mt for i in range(3)]
@@ -408,10 +475,10 @@ def build():
            "inertia_body_frd_kgm2": [[round(v, 9) for v in row] for row in I],
            "membrane_area_per_side_cm2": {"fore_panel": round(fA / 100, 1), "hind_panel": round(hA / 100, 1)},
            "fold_angle_deg": round(math.degrees(wing.beta), 2),
-           "spine_z_centre_mm": round(zc, 2),
+           "spine_z_centre_mm": round(zc, 2), "spine_length_mm": round(LY["spine_length"], 1),
            "static_clashes": clashes,
            "printed_parts": {b.name: {"lumps": b.lumps.count, "volume_cm3": round(b.physicalProperties.volume, 3)}
-                             for o in root.occurrences for b in o.bRepBodies if b.name.startswith(("PRINT_", "Frame_", "Tray_"))},
+                             for o in root.occurrences for b in o.bRepBodies if b.name.startswith(("PRINT_", "Frame_"))},
            "items": [{"name": n, "mass_g": round(m, 3), "pos_mm": [round(v, 1) for v in p]} for n, m, p in items]}
     with open(os.path.join(HERE, "fusion_mass_properties.json"), "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=2)

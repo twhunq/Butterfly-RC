@@ -18,15 +18,17 @@ G0 = 9.80665
 def sections(which):
     """(span y, LE x, TE x) in wing-local mm. The hind wing keeps only the part not covered by the fore wing."""
     fore, hind = catmull(FORE, 1), catmull(HIND, 1)
+    poly = fore if which == "fore" else hind    # hind panel starts at the fold line: no overlap with the fore panel
+    ymax = float(poly[:, 1].max())
+    if which == "fore":                         # ~40 mm stations, denser towards the rounded apex
+        ys = [2.0] + [30.0 + k * (ymax - 70) / 7 for k in range(8)] + [ymax - 25, ymax - 10, ymax - 1.5]
+    else:                                       # fine near the root, where the chord grows from zero
+        y_e = WING_GEOM.E[1]
+        ys = [3.0, 0.3 * y_e, 0.6 * y_e, y_e] + [y_e + k * (ymax - 25 - y_e) / 6 for k in range(1, 7)] + [ymax - 10, ymax - 2]
     out = []
-    if which == "fore":
-        for y in [2, 30, 70, 110, 150, 190, 230, 270, 310, 345, 375, 384]:
-            iv = intervals_at(fore, y)
-            out.append((y, max(b for a, b in iv), min(a for a, b in iv)))
-    else:
-        for y in [3, 10, 18, 30, 45, 60, 90, 120, 150, 180, 205, 225]:
-            ih = intervals_at(hind, y)          # hind panel starts at the fold line: no overlap with the fore panel
-            out.append((y, max(b for a, b in ih), min(a for a, b in ih)))
+    for y in ys:
+        iv = intervals_at(poly, y)
+        out.append((round(y, 1), max(b for a, b in iv), min(a for a, b in iv)))
     return out
 
 

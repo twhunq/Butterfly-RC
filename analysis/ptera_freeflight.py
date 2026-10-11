@@ -3,7 +3,8 @@
 Geometry from design/butterfly_params.json, mass / CG / inertia from design/fusion_mass_properties.json.
 Two prescribed flap cycles, then free flight. Wing inertial reaction on the body is not modelled.
 
-Run:  .venv/Scripts/python ptera_freeflight.py [free_steps] [U0] [alpha0] [amp_deg] [f_hz]
+Run:  .venv/Scripts/python ptera_freeflight.py [free_steps] [U0] [alpha0] [amp_deg] [f_hz] [amp_left_deg]
+(amp_deg is the right wing; amp_left_deg defaults to amp_deg, set it to test differential-amplitude steering)
 """
 import sys
 from pathlib import Path
@@ -22,11 +23,12 @@ U0 = float(sys.argv[2]) if len(sys.argv) > 2 else 3.6
 A0 = float(sys.argv[3]) if len(sys.argv) > 3 else 9.0
 AMP = float(sys.argv[4]) if len(sys.argv) > 4 else FLIGHT["amp_deg"]
 F = float(sys.argv[5]) if len(sys.argv) > 5 else FLIGHT["f_hz"]
+AMP_L = float(sys.argv[6]) if len(sys.argv) > 6 else None
 
 
 def main():
     plane = pm.airplane()
-    am = pm.movement(plane, f=F, amp=AMP, U=U0)
+    am = pm.movement(plane, f=F, amp=AMP, U=U0, amp_left=AMP_L)
     op = ps.operating_point.OperatingPoint(rho=1.2, vCg__E=U0, alpha=A0, beta=0.0, angles_E_to_BP1_izyx=(0.0, A0, 0.0),
                                            nu=15.06e-6, g_E=(0.0, 0.0, pm.G0))
     opm = ps.movements.free_flight_operating_point_movement.FreeFlightOperatingPointMovement(base_operating_point=op)
@@ -37,7 +39,9 @@ def main():
     prob = ps.problems.FreeFlightUnsteadyProblem(movement=mv, mass=MASS_KG, I_BP1_CgP1=INERTIA)
     solver = ps.free_flight_unsteady_ring_vortex_lattice_method.FreeFlightUnsteadyRingVortexLatticeMethodSolver(
         free_flight_unsteady_problem=prob)
-    tag = "cg%.0f_f%.1f_a%.0f_U%.1f" % (MASSPROPS["cg_behind_le_mm"], F, AMP, U0)
+    tag = "cg%.0f_f%.1f_a%g_U%.1f" % (MASSPROPS["cg_behind_le_mm"], F, AMP, U0)
+    if AMP_L is not None and AMP_L != AMP:
+        tag += "_L%g" % AMP_L
     status = "completed"
     try:
         solver.run(prescribed_wake=True, calculate_streamlines=False, show_progress=False)
